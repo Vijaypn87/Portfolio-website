@@ -1,0 +1,195 @@
+@import '@fontsource-variable/inter';
+@import '@fontsource-variable/space-grotesk';
+@import '@fontsource-variable/jetbrains-mono';
+@import 'tailwindcss';
+
+/* Design tokens: the single source of truth for the theme (dark only).
+   Palette: warm charcoal ground, orange as the primary accent (actions, focus, key highlights),
+   amber as the softer secondary (eyebrows, borders, icons), and cream text. */
+@theme {
+  --color-night-950: #080706;
+  --color-night-900: #0e0c0b;
+  --color-night-800: #161312;
+  --color-night-700: #211c19;
+  --color-line: rgb(255 177 92 / 0.12);
+
+  --color-ember-300: #ffa566;
+  --color-ember-400: #ff8f4d;
+  --color-ember-500: #ff7a30;
+  --color-ember-600: #e5631a;
+  --color-amber-300: #ffd29a;
+  --color-amber-400: #ffb15c;
+  --color-amber-500: #e39a44;
+
+  --color-ink: #f6efe6;
+  --color-ink-muted: #b3a89b;
+
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'Space Grotesk Variable', 'Inter Variable', ui-sans-serif, sans-serif;
+  --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
+
+  --text-display: clamp(2.75rem, 6vw + 1rem, 5.75rem);
+  --text-title: clamp(1.875rem, 2.5vw + 1rem, 3rem);
+
+  --breakpoint-xs: 30rem;
+}
+
+@layer base {
+  html {
+    color-scheme: dark;
+    scroll-behavior: smooth;
+    scroll-padding-top: 5rem;
+    background: var(--color-night-900);
+  }
+  body {
+    @apply bg-night-900 font-sans text-ink antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  h1,
+  h2,
+  h3 {
+    @apply font-display tracking-tight;
+  }
+  ::selection {
+    background: rgb(255 122 48 / 0.32);
+  }
+  /* Set the ring colour up front, so the focus ring never fades in from the element's text colour
+     (Tailwind's default transitions animate outline-color, which flashed dark on the orange button). */
+  :where(a, button, input, textarea, select, summary, [tabindex]) {
+    outline-color: var(--color-ember-500);
+  }
+  :focus-visible {
+    @apply outline-2 outline-offset-4 outline-ember-500;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+/* Lenis smooth-scroll requirements (only applied while Lenis is active). */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: clip;
+}
+
+@utility text-gradient {
+  background-image: linear-gradient(120deg, var(--color-amber-300), var(--color-ember-500));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Hand over from the static SVG sculpture to WebGL once the 3D scene is actually running. */
+html[data-webgl='ready'] [data-static-visual] {
+  opacity: 0;
+}
+
+/* Project detail dialog: a short fade and rise. Reduced motion is handled by the global rule above. */
+dialog.project-dialog[open] {
+  animation: dialog-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+}
+dialog.project-dialog[open]::backdrop {
+  animation: backdrop-in 0.28s ease;
+}
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+}
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+/* ---- Custom cursor (mouse users only; see CustomCursor.tsx) ---------------------------------
+   The native cursor is hidden only after the mouse has moved, never over text fields, and not
+   while a dialog is open (the dialog sits above the cursor layer). */
+html.custom-cursor,
+html.custom-cursor * {
+  cursor: none !important;
+}
+html.custom-cursor :is(input, textarea, select, [contenteditable='true']),
+html:has(dialog[open]) * {
+  cursor: auto !important;
+}
+
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.25s ease;
+}
+html[data-cursor-visible='true'] .cursor-dot,
+html[data-cursor-visible='true'] .cursor-ring {
+  opacity: 1;
+}
+html:has(dialog[open]) .cursor-dot,
+html:has(dialog[open]) .cursor-ring {
+  opacity: 0 !important;
+}
+
+.cursor-dot {
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  border-radius: 9999px;
+  background: var(--color-amber-300);
+  transition:
+    opacity 0.25s ease,
+    background-color 0.25s ease,
+    scale 0.25s ease;
+}
+.cursor-dot[data-state='link'] {
+  background: var(--color-ember-400);
+}
+.cursor-dot[data-state='card'] {
+  background: var(--color-amber-300);
+}
+
+/* The ring is thin, translucent and border-only, so labels underneath stay fully readable. */
+.cursor-ring {
+  width: 26px;
+  height: 26px;
+  margin: -13px 0 0 -13px;
+  border: 1px solid rgb(255 177 92 / 0.5);
+  border-radius: 9999px;
+  transition:
+    opacity 0.25s ease,
+    scale 0.3s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.3s ease,
+    background-color 0.3s ease;
+}
+.cursor-ring[data-state='link'] {
+  scale: 1.2;
+  border-color: rgb(255 122 48 / 0.85);
+  background-color: rgb(255 122 48 / 0.06);
+}
+.cursor-ring[data-state='card'] {
+  scale: 1.15;
+  border-color: rgb(255 177 92 / 0.6);
+  background-color: rgb(255 177 92 / 0.04);
+}
+.cursor-ring[data-pressed='true'] {
+  scale: 0.9;
+}
