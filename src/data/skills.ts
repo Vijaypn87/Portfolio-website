@@ -1,47 +1,45 @@
 import type { SkillGroup } from '@/types'
 
-/** Shown under the Skills heading. Deliberately makes no claim about proficiency levels. */
-export const skillsNote = 'Technologies I work with and continue to learn.'
-
-// Taken from the Technical Skills on your resume, plus technologies named in your project and
-// internship entries (TypeScript, Tailwind CSS, Vite, YOLOv8, Chroma, OpenAI, Google Earth Engine).
+// Skills by category, shown in this order. To add or move a skill, edit the lists below.
 export const skillGroups: SkillGroup[] = [
   {
-    id: 'programming',
-    title: 'Programming',
-    icon: 'code',
+    id: 'languages',
+    title: 'Programming Languages',
+    skills: ['Python', 'JavaScript', 'TypeScript', 'SQL'],
+  },
+  {
+    id: 'web',
+    title: 'Web Development',
     skills: [
-      'Python',
-      'JavaScript',
-      'TypeScript',
-      'SQL',
+      'React',
+      'HTML',
+      'CSS',
+      'Tailwind CSS',
+      'Vite',
+      'Node.js',
+      'Express.js',
+      'FastAPI',
+      'Flask',
+      'Django',
+      'REST APIs',
+    ],
+  },
+  {
+    id: 'core-cs',
+    title: 'Core Computer Science',
+    skills: [
       'Data Structures & Algorithms',
-      'OOP',
+      'Object-Oriented Programming',
       'Operating Systems',
       'Computer Networks',
     ],
   },
   {
-    id: 'frontend',
-    title: 'Frontend',
-    icon: 'frontend',
-    skills: ['React', 'HTML', 'CSS', 'Tailwind CSS', 'Vite'],
-  },
-  {
-    id: 'backend',
-    title: 'Backend',
-    icon: 'backend',
-    skills: ['FastAPI', 'Flask', 'Django', 'Node.js', 'Express.js', 'REST APIs'],
-  },
-  {
     id: 'ai-ml',
-    title: 'AI / ML',
-    icon: 'ai',
+    title: 'AI & Machine Learning',
     skills: [
-      'Machine learning',
-      'Deep learning',
       'RAG',
-      'Computer vision',
+      'Computer Vision',
       'PyTorch',
       'Scikit-learn',
       'XGBoost',
@@ -50,13 +48,34 @@ export const skillGroups: SkillGroup[] = [
       'NumPy',
       'Pandas',
       'Streamlit',
-      'OpenAI',
     ],
   },
   {
-    id: 'tools',
-    title: 'Tools & Databases',
-    icon: 'tools',
-    skills: ['Git', 'GitHub', 'MongoDB', 'MySQL', 'Chroma', 'Google Earth Engine'],
+    id: 'data-tools',
+    title: 'Databases & Developer Tools',
+    skills: ['SQLite', 'MongoDB', 'MySQL', 'Chroma', 'Git', 'GitHub', 'Google Earth Engine'],
+  },
+  {
+    id: 'deployment',
+    title: 'Deployment & Cloud Platforms',
+    skills: ['Vercel', 'Render', 'Railway', 'Netlify', 'Supabase', 'Cloudflare'],
   },
 ]
+
+/**
+ * Which categories go in which column, by group id, when the skills card shows 3, 2 or 1 columns
+ * (wide screens, tablets, phones). Each column is its own stack, top-aligned, so edit these lists to
+ * rebalance the columns.
+ */
+export const skillColumns: Record<1 | 2 | 3, string[][]> = {
+  3: [
+    ['languages', 'web'],
+    ['core-cs', 'data-tools'],
+    ['ai-ml', 'deployment'],
+  ],
+  2: [
+    ['languages', 'web', 'core-cs'],
+    ['ai-ml', 'data-tools', 'deployment'],
+  ],
+  1: [['languages', 'web', 'core-cs', 'ai-ml', 'data-tools', 'deployment']],
+}

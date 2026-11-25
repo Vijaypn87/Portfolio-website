@@ -4,7 +4,7 @@ import { profile } from '@/data/profile'
 import { Section } from '@/components/layout/Section'
 import { SectionHeading } from '@/components/layout/SectionHeading'
 import { Reveal } from '@/components/ui/Reveal'
-import { GitHubIcon, LinkedInIcon } from '@/components/ui/SocialIcons'
+import { GitHubIcon, LinkedInIcon, RedditIcon } from '@/components/ui/SocialIcons'
 import { contactEndpoint } from '@/lib/contact'
 import { isSecureUrl, isValidEmail } from '@/lib/validation'
 import { ContactForm } from './contact/ContactForm'
@@ -20,6 +20,7 @@ interface ContactLink {
 const socialIcons: Record<string, ReactNode> = {
   GitHub: <GitHubIcon size={20} />,
   LinkedIn: <LinkedInIcon size={20} />,
+  Reddit: <RedditIcon size={20} />,
 }
 
 /** "https://www.github.com/name/" becomes "github.com/name". */
@@ -50,10 +51,10 @@ export function Contact() {
       : []),
     ...profile.socials
       .filter(({ href }) => isSecureUrl(href))
-      .map(({ label, href }) => ({
+      .map(({ label, href, handle }) => ({
         label,
         href,
-        text: shortUrl(href),
+        text: handle ?? shortUrl(href),
         icon: socialIcons[label] ?? <ArrowUpRight aria-hidden="true" size={20} />,
         external: true,
       })),
@@ -64,7 +65,12 @@ export function Contact() {
 
   return (
     <Section id="contact">
-      <SectionHeading index="04" eyebrow="Contact" title={'Let’s build something meaningful.'} />
+      <SectionHeading
+        index="04"
+        label="connect"
+        title="Let’s build"
+        accent="something meaningful."
+      />
 
       <div className="grid gap-12 lg:grid-cols-12 lg:gap-16">
         <Reveal className="lg:col-span-5">
@@ -81,21 +87,25 @@ export function Contact() {
                     href={href}
                     {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
                     aria-label={
-                      external ? `${label}: ${text} (opens in a new tab)` : `${label}: ${text}`
+                      label === 'Reddit'
+                        ? 'Reddit'
+                        : external
+                          ? `${label}: ${text} (opens in a new tab)`
+                          : `${label}: ${text}`
                     }
-                    className="group flex items-center gap-4 rounded-2xl border border-line bg-white/[0.03] p-4 transition duration-300 hover:border-amber-400/40 hover:bg-white/[0.06]"
+                    className="hover-lift group flex items-center gap-4 rounded-2xl border border-line bg-card p-4 transition duration-300 hover:border-accent/40 hover:bg-white/[0.06]"
                   >
-                    <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-amber-400/10 text-amber-300 transition-colors duration-300 group-hover:bg-ember-500/15 group-hover:text-ember-400">
+                    <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-accent/10 text-fg transition-colors duration-300 group-hover:bg-accent/15 group-hover:text-accent">
                       {icon}
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block font-mono text-xs text-amber-400">{label}</span>
+                      <span className="block font-mono text-xs text-accent">{label}</span>
                       <span className="block truncate text-ink">{text}</span>
                     </span>
                     <ArrowUpRight
                       aria-hidden="true"
                       size={18}
-                      className="shrink-0 text-ink-muted transition duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-ember-400"
+                      className="shrink-0 text-ink-muted transition duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-accent"
                     />
                   </a>
                 </li>
@@ -105,7 +115,7 @@ export function Contact() {
         </Reveal>
 
         <Reveal delay={0.08} className="lg:col-span-7">
-          <div className="rounded-3xl border border-line bg-white/[0.03] p-6 backdrop-blur-sm sm:p-8">
+          <div className="rounded-3xl border border-line bg-card p-6 sm:p-8">
             {canSend ? (
               <ContactForm email={email} />
             ) : (

@@ -1,100 +1,196 @@
-import type { ReactElement } from 'react'
-import { Mail } from 'lucide-react'
+import { Fragment } from 'react'
+import { Download } from 'lucide-react'
+import type { Variants } from 'motion/react'
 import * as m from 'motion/react-m'
 import { profile } from '@/data/profile'
 import { Container } from '@/components/layout/Container'
+import { GridFrame } from '@/components/layout/GridFrame'
 import { Button } from '@/components/ui/Button'
-import { GlowBackground } from '@/components/ui/GlowBackground'
-import { GitHubIcon, LinkedInIcon } from '@/components/ui/SocialIcons'
-import { StaticSculpture } from '@/components/ui/StaticSculpture'
-import { fadeUp, stagger } from '@/lib/motion'
-import { HERO_3D_ANCHOR_ID } from '@/three/anchor'
+import { Card } from '@/components/ui/Card'
+import { Portrait } from '@/components/ui/Portrait'
+import { RichBio } from '@/components/ui/RichBio'
+import { RotatingRole } from '@/components/ui/RotatingRole'
+import { SectionTag } from '@/components/ui/SectionTag'
+import { GitHubIcon, LinkedInIcon, RedditIcon, XIcon } from '@/components/ui/SocialIcons'
+import { ThemeToggle } from '@/components/ui/ThemeToggle'
+import { useIntroFlew, useIntroStage } from '@/lib/intro'
+import { ease, fadeUp, stagger } from '@/lib/motion'
 
-const socialIcons: Record<string, ReactElement> = {
-  GitHub: <GitHubIcon size={18} />,
-  LinkedIn: <LinkedInIcon size={18} />,
+interface LetterCustom {
+  /** Position in the stagger, in letters. */
+  order: number
+  /** True for the word the intro loader already flew into place (the name): show it with no reveal. */
+  instant: boolean
 }
 
-const iconLink =
-  'inline-flex size-10 items-center justify-center rounded-full border border-line text-ink-muted transition duration-200 hover:-translate-y-0.5 hover:border-amber-400/60 hover:text-ink'
+const letter: Variants = {
+  hidden: { opacity: 0, y: '0.2em', filter: 'blur(12px)' },
+  visible: ({ order, instant }: LetterCustom) => ({
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: instant ? { duration: 0 } : { duration: 0.7, ease, delay: order * 0.05 },
+  }),
+}
+
+const socialIcons = {
+  GitHub: GitHubIcon,
+  LinkedIn: LinkedInIcon,
+  X: XIcon,
+  Reddit: RedditIcon,
+} as const
 
 /**
- * Two columns from `lg` up: text on the left, the 3D neural sculpture on the right. On smaller
- * screens they stack, text first. All content is real HTML; the sculpture is a decorative layer
- * that follows the `#hero-3d` cell, and a static SVG version fills that cell until (or unless)
- * WebGL runs.
+ * The greeting, "Hi, I’m Vijay", revealed letter by letter from blur to sharp. "Hi, I’m" is
+ * off-white and the name is in the warm tone colour. The intro loader's "Vijay" flies onto the name.
+ */
+function HeroName({ revealed, nameFlew }: { revealed: boolean; nameFlew: boolean }) {
+  const words = ['Hi,', 'I’m', profile.name.split(' ')[0]]
+  const nameIndex = words.length - 1
+  let count = 0
+
+  return (
+    <m.h1
+      aria-label={words.join(' ')}
+      initial="hidden"
+      animate={revealed ? 'visible' : 'hidden'}
+      className="text-display leading-[0.9] font-bold tracking-tighter"
+    >
+      {words.map((word, w) => {
+        const isName = w === nameIndex
+        // When the loader's "Vijay" flew in, that word needs no reveal and the others start at once.
+        const instant = nameFlew && isName
+        return (
+          <Fragment key={w}>
+            <span
+              data-hero-word={isName ? 'name' : undefined}
+              className={isName ? 'inline-block text-tone' : 'inline-block'}
+            >
+              {[...word].map((char, i) => {
+                const order = instant ? 0 : count++
+                return (
+                  <m.span
+                    key={i}
+                    aria-hidden="true"
+                    variants={letter}
+                    custom={{ order, instant } satisfies LetterCustom}
+                    className="inline-block"
+                  >
+                    {char}
+                  </m.span>
+                )
+              })}
+            </span>
+            {w < words.length - 1 && ' '}
+          </Fragment>
+        )
+      })}
+    </m.h1>
+  )
+}
+
+/**
+ * 01 / about, as one large bento card: status pill, the name, role, a short bio and buttons on the
+ * left; the portrait in a rotating text ring on the right.
  */
 export function Hero() {
-  const email = profile.email
+  const stage = useIntroStage()
+  const flew = useIntroFlew()
+  const waiting = stage === 'pending'
+  const links = profile.socials.filter(({ href }) => href)
 
   return (
     <section
       id="top"
-      className="relative pt-28 pb-16 lg:flex lg:min-h-svh lg:items-center lg:py-0 lg:pt-16"
+      className="relative pt-[32px] pb-[16px] sm:pt-[76px] sm:pb-[20px] lg:pb-[24px]"
     >
-      <GlowBackground />
+      {/* The frame's top line is 24px from the page top (60px from sm up); the card sits 8px (16px) below it. */}
+      <GridFrame className="[--frame-top:24px] sm:[--frame-top:60px]" />
       <Container>
-        <div className="grid items-center gap-12 lg:grid-cols-[minmax(0,0.95fr)_minmax(0,1.05fr)] lg:gap-8">
-          <m.div className="max-w-xl" variants={stagger} initial="hidden" animate="visible">
-            <m.p variants={fadeUp} className="mb-5 font-mono text-sm text-amber-400">
-              {profile.role}
-            </m.p>
-            <m.h1
-              variants={fadeUp}
-              className="text-display leading-[1.02] font-semibold text-balance"
-            >
-              Hi, I&rsquo;m <span className="text-gradient">{profile.name}</span>.
-            </m.h1>
-            {profile.tagline && (
-              <m.p
-                variants={fadeUp}
-                className="mt-6 max-w-lg text-lg leading-relaxed text-ink-muted"
+        <m.div variants={fadeUp} initial="hidden" animate={waiting ? 'hidden' : 'visible'}>
+          <Card className="p-6 sm:p-10 lg:p-14">
+            {/* Top row: the section label on the left; the status and theme toggle on the right. The
+                name sits on its own line just below. */}
+            <div className="flex items-center justify-between gap-3">
+              <SectionTag text="01 / about" active={!waiting} />
+              <div className="-mr-2 flex shrink-0 items-center gap-1">
+                {profile.openToWork && (
+                  <span className="label-mono inline-flex items-center gap-2 rounded-full border border-ok/40 bg-ok/10 px-3 py-1.5 text-ok">
+                    <span aria-hidden="true" className="status-dot size-1.5 rounded-full bg-ok" />
+                    Open to work
+                  </span>
+                )}
+                <ThemeToggle />
+              </div>
+            </div>
+
+            <div className="mt-5">
+              <span className="block truncate font-display text-[15px] font-bold tracking-tight text-fg">
+                {profile.name}
+              </span>
+            </div>
+
+            <div className="mt-8 grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_17rem] lg:gap-14">
+              <m.div
+                variants={stagger}
+                initial="hidden"
+                animate={waiting ? 'hidden' : 'visible'}
+                className="order-last lg:order-first"
               >
-                {profile.tagline}
-              </m.p>
-            )}
-            <m.div variants={fadeUp} className="mt-9 flex flex-wrap gap-4">
-              <Button href="#projects" magnetic>
-                View projects
-              </Button>
-              <Button href="#contact" variant="ghost" magnetic>
-                Get in touch
-              </Button>
-            </m.div>
+                <HeroName revealed={stage === 'landed'} nameFlew={flew} />
+                <m.p variants={fadeUp} className="mt-5 text-xl text-muted sm:text-2xl">
+                  <RotatingRole roles={profile.roles} />
+                </m.p>
+                <m.p
+                  variants={fadeUp}
+                  className="mt-6 max-w-xl text-base leading-relaxed text-muted"
+                >
+                  <RichBio
+                    text={profile.tagline}
+                    techs={profile.taglineTech}
+                    terms={profile.taglineTerms}
+                    accent={profile.taglineAccent}
+                  />
+                </m.p>
 
-            <m.ul variants={fadeUp} aria-label="Social links" className="mt-8 flex gap-2">
-              {profile.socials
-                .filter(({ href }) => href)
-                .map(({ label, href }) => (
-                  <li key={label}>
-                    <a
-                      href={href}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      aria-label={`${label} (opens in a new tab)`}
-                      className={iconLink}
-                    >
-                      {socialIcons[label]}
-                    </a>
+                <m.ul variants={fadeUp} className="mt-9 flex flex-wrap gap-x-2 gap-y-4">
+                  <li>
+                    <Button href={profile.resumeUrl} download magnetic>
+                      <Download aria-hidden="true" size={16} />
+                      Resume
+                    </Button>
                   </li>
-                ))}
-              {email && (
-                <li>
-                  <a href={`mailto:${email}`} aria-label={`Email ${email}`} className={iconLink}>
-                    <Mail aria-hidden="true" size={18} />
-                  </a>
-                </li>
-              )}
-            </m.ul>
-          </m.div>
+                  {links.map(({ label, href }) => {
+                    const Icon = socialIcons[label as keyof typeof socialIcons]
+                    return (
+                      <li key={label}>
+                        <Button
+                          href={href}
+                          variant="ghost"
+                          magnetic
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          aria-label={label}
+                          className="group size-[40px] px-0 py-0"
+                        >
+                          {Icon && <Icon size={18} />}
+                          <span
+                            aria-hidden="true"
+                            className="pointer-events-none absolute bottom-full left-1/2 mb-[16px] -translate-x-1/2 rounded-md border border-line bg-card px-2 py-1 text-[12px] font-medium whitespace-nowrap text-fg opacity-0 shadow-sm transition-opacity duration-150 group-hover:opacity-100 group-focus-visible:opacity-100"
+                          >
+                            {label}
+                          </span>
+                        </Button>
+                      </li>
+                    )
+                  })}
+                </m.ul>
+              </m.div>
 
-          <div
-            id={HERO_3D_ANCHOR_ID}
-            className="relative mx-auto aspect-[5/4] w-full max-w-xl lg:max-w-none"
-          >
-            <StaticSculpture />
-          </div>
-        </div>
+              <Portrait priority className="max-w-[14.5rem] lg:max-w-none" />
+            </div>
+          </Card>
+        </m.div>
       </Container>
     </section>
   )

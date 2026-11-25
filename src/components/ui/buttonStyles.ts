@@ -4,19 +4,15 @@ export type ButtonVariant = 'primary' | 'ghost'
 
 export const buttonVariants = {
   primary: {
-    box: 'bg-ember-500 text-night-950 shadow-[0_8px_30px_-10px] shadow-ember-500/50 hover:bg-ember-400 hover:shadow-[0_14px_40px_-10px] hover:shadow-ember-500/70',
-    sheen: 'via-white/30',
+    box: 'bg-accent text-on-accent shadow-[0_8px_30px_-10px_rgb(var(--glow)/0.7)] hover:brightness-110',
   },
-  ghost: {
-    box: 'border border-line text-ink hover:border-amber-400/60 hover:bg-amber-400/10 hover:shadow-[0_10px_30px_-14px] hover:shadow-ember-500/50',
-    sheen: 'via-amber-400/20',
-  },
+  ghost: { box: 'border border-line text-fg hover:border-accent/60 hover:text-accent' },
 }
 
 /** Classes for anything that should look like a button (a link, or a real `<button>`). */
 export function buttonStyles(variant: ButtonVariant = 'primary', className?: string) {
   return cn(
-    'group/button relative inline-flex items-center overflow-hidden rounded-full px-6 py-3 text-sm font-medium transition duration-200 active:scale-[0.97]',
+    'relative inline-flex min-h-[40px] items-center justify-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold transition duration-200 active:scale-[0.98]',
     buttonVariants[variant].box,
     className,
   )

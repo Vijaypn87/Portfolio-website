@@ -3,46 +3,92 @@
 @import '@fontsource-variable/jetbrains-mono';
 @import 'tailwindcss';
 
-/* Design tokens: the single source of truth for the theme (dark only).
-   Palette: warm charcoal ground, orange as the primary accent (actions, focus, key highlights),
-   amber as the softer secondary (eyebrows, borders, icons), and cream text. */
-@theme {
-  --color-night-950: #080706;
-  --color-night-900: #0e0c0b;
-  --color-night-800: #161312;
-  --color-night-700: #211c19;
-  --color-line: rgb(255 177 92 / 0.12);
+/* Design tokens. A warm off-white ground with a green accent (light), and a
+   warm near-black version with a glow (dark). The toggle sets data-theme="light" | "dark" on <html>.
+   --glow and --dot are rgb triplets so they can take an alpha: rgb(var(--glow) / 0.2). */
+:root {
+  color-scheme: dark;
+  --bg: #0a0706;
+  --card: #120d0b;
+  --fg: #f5ede7;
+  --muted: #a89c94; /* 7.5:1 on --bg */
+  --line: rgb(255 255 255 / 0.1);
+  --accent: #22c55e; /* green-500 */
+  --on-accent: #0a0706;
+  --glow: 34 197 94;
+  --dot: 255 255 255;
+  --tone: #4ade80; /* green-400: the second half of two-tone headings */
+  --danger: #f87171; /* red, for errors */
+  --ok: #4ade80; /* green for status, e.g. the Open to work pill */
+}
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f8f4f0;
+  --card: #ffffff;
+  --fg: #1c1511;
+  --muted: #655a53; /* 6.3:1 on --bg */
+  --line: rgb(28 21 17 / 0.12);
+  --accent: #136f36; /* a deep green: 6.3:1 with white text, 5.7:1 on --bg, 4.6:1 on its own 15% tint */
+  --on-accent: #ffffff;
+  --glow: 22 163 74; /* green-600 */
+  --dot: 28 21 17;
+  --tone: #16a34a; /* green-600: large heading text, 3.3:1 */
+  --danger: #b91c1c;
+  --ok: #166534;
+}
 
-  --color-ember-300: #ffa566;
-  --color-ember-400: #ff8f4d;
-  --color-ember-500: #ff7a30;
-  --color-ember-600: #e5631a;
-  --color-amber-300: #ffd29a;
-  --color-amber-400: #ffb15c;
-  --color-amber-500: #e39a44;
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--card);
+  --color-card: var(--card);
+  --color-fg: var(--fg);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-tone: var(--tone);
+  --color-danger: var(--danger);
+  --color-ok: var(--ok);
+  --color-on-accent: var(--on-accent);
 
-  --color-ink: #f6efe6;
-  --color-ink-muted: #b3a89b;
+  /* Legacy names used by sections that have not been rebuilt yet. They map onto the tokens above
+     and are removed in the final cleanup. */
+  --color-ink: var(--fg);
+  --color-ink-muted: var(--muted);
+  --color-night-950: var(--bg);
+  --color-night-900: var(--bg);
+  --color-night-800: var(--card);
+  --color-night-700: var(--card);
 
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Space Grotesk Variable', 'Inter Variable', ui-sans-serif, sans-serif;
   --font-mono: 'JetBrains Mono Variable', ui-monospace, monospace;
 
-  --text-display: clamp(2.75rem, 6vw + 1rem, 5.75rem);
-  --text-title: clamp(1.875rem, 2.5vw + 1rem, 3rem);
+  /* Overall scale: about 10-15% smaller type and about 6% tighter spacing than the Tailwind
+     defaults. text-sm stays at 14px, the floor for body text. Tune the whole page here. */
+  --spacing: 0.235rem;
+  --text-xs: 0.6875rem;
+  --text-base: 0.9rem;
+  --text-lg: 1rem;
+  --text-xl: 1.1rem;
+  --text-2xl: 1.3rem;
+  --text-3xl: 1.65rem;
+  --text-5xl: 2.6rem;
+  --text-display: clamp(2.875rem, 7.8vw, 6.1rem);
+  --text-title: clamp(1.75rem, 3.4vw + 0.4rem, 3rem);
 
   --breakpoint-xs: 30rem;
+  /* The width at which the content column reaches its 1344px maximum. */
+  --breakpoint-wide: 84rem;
 }
 
 @layer base {
   html {
-    color-scheme: dark;
     scroll-behavior: smooth;
-    scroll-padding-top: 5rem;
-    background: var(--color-night-900);
+    scroll-padding-top: 2rem;
+    background: var(--bg);
   }
   body {
-    @apply bg-night-900 font-sans text-ink antialiased;
+    @apply bg-bg font-sans text-fg antialiased;
     text-rendering: optimizeLegibility;
   }
   h1,
@@ -51,15 +97,14 @@
     @apply font-display tracking-tight;
   }
   ::selection {
-    background: rgb(255 122 48 / 0.32);
+    background: var(--accent);
+    color: var(--on-accent);
   }
-  /* Set the ring colour up front, so the focus ring never fades in from the element's text colour
-     (Tailwind's default transitions animate outline-color, which flashed dark on the orange button). */
   :where(a, button, input, textarea, select, summary, [tabindex]) {
-    outline-color: var(--color-ember-500);
+    outline-color: var(--accent);
   }
   :focus-visible {
-    @apply outline-2 outline-offset-4 outline-ember-500;
+    @apply outline-2 outline-offset-4 outline-accent;
   }
   @media (prefers-reduced-motion: reduce) {
     html {
@@ -75,6 +120,15 @@
   }
 }
 
+/* Small mono uppercase label, e.g. "01 / about". */
+@utility label-mono {
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
 /* Lenis smooth-scroll requirements (only applied while Lenis is active). */
 html.lenis,
 html.lenis body {
@@ -87,19 +141,201 @@ html.lenis body {
   overflow: clip;
 }
 
-@utility text-gradient {
-  background-image: linear-gradient(120deg, var(--color-amber-300), var(--color-ember-500));
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+/* ---- Background: scrolling code and a mouse spotlight (see AmbientBackground.tsx) ---- */
+/* Faint code scrolling slowly upward, fading out at the top and bottom edges. */
+.code-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.1;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 1.7;
+  white-space: pre;
+  color: var(--accent);
+  mask-image: linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
 }
-
-/* Hand over from the static SVG sculpture to WebGL once the 3D scene is actually running. */
-html[data-webgl='ready'] [data-static-visual] {
+:root[data-theme='light'] .code-bg {
+  opacity: 0.08;
+}
+/* The same code again, bright with a soft glow, but only within 180px of the mouse. */
+.code-bg.code-lit {
   opacity: 0;
+  transition: opacity 0.4s ease;
+  text-shadow: 0 0 10px rgb(var(--glow) / 0.7);
+  mask-image:
+    radial-gradient(
+      circle 180px at var(--mouse-x, -400px) var(--mouse-y, -400px),
+      #000,
+      transparent
+    ),
+    linear-gradient(to bottom, transparent, #000 18%, #000 82%, transparent);
+  mask-composite: intersect;
+}
+.aurora[data-active='true'] .code-bg.code-lit {
+  opacity: 0.5;
+}
+.code-col {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 24vw;
+  overflow: hidden;
+}
+.code-col.c0 {
+  left: 2vw;
+}
+.code-col.c1 {
+  left: 27vw;
+}
+.code-col.c2 {
+  left: 52vw;
+}
+.code-col.c3 {
+  left: 76vw;
+}
+.code-track {
+  will-change: transform;
+  animation: code-up 70s linear infinite;
+}
+.code-col.c1 .code-track {
+  animation-duration: 84s;
+  animation-delay: -20s;
+}
+.code-col.c2 .code-track {
+  animation-duration: 62s;
+  animation-delay: -35s;
+}
+.code-col.c3 .code-track {
+  animation-duration: 90s;
+  animation-delay: -50s;
+}
+@keyframes code-up {
+  to {
+    transform: translate3d(0, -50%, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .code-track {
+    animation: none !important;
+  }
+}
+.aurora-spot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 400px;
+  height: 400px;
+  border-radius: 9999px;
+  background: radial-gradient(closest-side, rgb(var(--glow) / 0.22), transparent);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  will-change: transform;
+}
+.aurora[data-active='true'] .aurora-spot {
+  opacity: 1;
 }
 
-/* Project detail dialog: a short fade and rise. Reduced motion is handled by the global rule above. */
+.grain {
+  position: absolute;
+  inset: -50%;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: 0.07;
+  animation: grain-shift 0.9s steps(1) infinite;
+}
+:root[data-theme='light'] .grain {
+  filter: invert(1);
+  opacity: 0.05;
+}
+@keyframes grain-shift {
+  0% {
+    transform: translate(0, 0);
+  }
+  20% {
+    transform: translate(-3%, 2%);
+  }
+  40% {
+    transform: translate(2%, -3%);
+  }
+  60% {
+    transform: translate(-2%, -2%);
+  }
+  80% {
+    transform: translate(3%, 3%);
+  }
+}
+
+/* ---- Cursors: small inline SVGs, no JavaScript. White with a dark outline and a green accent, so
+   they read on light and dark pages alike. Hotspots are at the tip of the arrow and the fingertip. ---- */
+:root {
+  --cursor-default:
+    url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='20'%20height='20'%20viewBox='0%200%2020%2020'%3E%3Cpath%20d='M3.2%202.2V16l3.6-3.3%202.4%205.2%202.3-1.1-2.4-5.1H14z'%20fill='white'%20stroke='%230a0a0a'%20stroke-width='1.5'%20stroke-linejoin='round'/%3E%3Cpath%20d='M3.2%202.2v4.6l3.4-2.5z'%20fill='%2322c55e'/%3E%3C/svg%3E")
+      3 2,
+    auto;
+  --cursor-pointer:
+    url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='20'%20height='20'%20viewBox='0%200%2024%2024'%3E%3Cpath%20d='M8%204a1.6%201.6%200%200%201%203.2%200v6.2a1.7%201.7%200%200%201%201.3-.2%201.7%201.7%200%200%201%201.3.9%201.7%201.7%200%200%201%201.5-.1%201.7%201.7%200%200%201%201.1%201%201.6%201.6%200%200%201%201.6%201.6V16c0%203-2.3%205.4-5.3%205.4h-1.6c-1.7%200-3.2-.8-4.2-2.1l-3-4a1.5%201.5%200%200%201%202.2-2L8%2014.200z'%20fill='white'%20stroke='%230a0a0a'%20stroke-width='1.5'%20stroke-linejoin='round'/%3E%3Ccircle%20cx='9.600'%20cy='4.200'%20r='1.200'%20fill='%2322c55e'/%3E%3C/svg%3E")
+      8 2,
+    pointer;
+}
+html,
+body {
+  cursor: var(--cursor-default);
+}
+a[href],
+button:not(:disabled),
+summary,
+label,
+[role='button'] {
+  cursor: var(--cursor-pointer);
+}
+input:not([type='checkbox'], [type='radio'], [type='submit']),
+textarea,
+[contenteditable='true'] {
+  cursor: text;
+}
+select {
+  cursor: auto;
+}
+
+/* ---- Cards: a soft spotlight that follows the pointer (see Card.tsx) ---- */
+.spotlight::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(
+    380px circle at var(--mx, 50%) var(--my, 50%),
+    rgb(var(--glow) / 0.16),
+    transparent 65%
+  );
+}
+.spotlight:hover::before {
+  opacity: 1;
+}
+
+/* Rotating text ring around the portrait. */
+@keyframes ring-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.ring-spin {
+  animation: ring-spin 48s linear infinite;
+}
+
+/* Pulse for status dots and the map pin. */
+@keyframes pulse-soft {
+  50% {
+    opacity: 0.35;
+  }
+}
+.status-dot {
+  animation: pulse-soft 2.2s ease-in-out infinite;
+}
+
+/* Project detail dialog: a short fade and rise. */
 dialog.project-dialog[open] {
   animation: dialog-in 0.28s cubic-bezier(0.22, 1, 0.36, 1);
 }
@@ -118,78 +354,318 @@ dialog.project-dialog[open]::backdrop {
   }
 }
 
-/* ---- Custom cursor (mouse users only; see CustomCursor.tsx) ---------------------------------
-   The native cursor is hidden only after the mouse has moved, never over text fields, and not
-   while a dialog is open (the dialog sits above the cursor layer). */
-html.custom-cursor,
-html.custom-cursor * {
-  cursor: none !important;
+/* Intro loader helpers (the loader itself is lazy; these are tiny). */
+@keyframes flash {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
-html.custom-cursor :is(input, textarea, select, [contenteditable='true']),
-html:has(dialog[open]) * {
-  cursor: auto !important;
+.boot .grain {
+  filter: none !important;
+  opacity: 0.14 !important;
 }
 
-.cursor-dot,
-.cursor-ring {
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 9999;
-  pointer-events: none;
-  opacity: 0;
-  transition: opacity 0.25s ease;
+/* ---- Location card: map colours and the pulsing pin (see LocationCard.tsx) ---- */
+:root {
+  --map-fill: rgb(255 255 255 / 0.07);
+  --map-stroke: rgb(255 255 255 / 0.4);
+  --pin: #22c55e;
 }
-html[data-cursor-visible='true'] .cursor-dot,
-html[data-cursor-visible='true'] .cursor-ring {
+:root[data-theme='light'] {
+  --map-fill: #e8e4e0;
+  --map-stroke: #9a938d;
+  --pin: #16a34a;
+}
+@keyframes pin-ring {
+  from {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  to {
+    transform: scale(4);
+    opacity: 0;
+  }
+}
+.pin-ring {
+  fill: none;
+  stroke: var(--pin);
+  stroke-width: 1.5;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: pin-ring 2.6s ease-out infinite;
+}
+
+/* ---- Blueprint grid (see GridFrame.tsx) ---------------------------------------------------------
+   Every section carries its own frame: a full-width line across its top, vertical lines that
+   make up the page's outer frame, small L-shaped brackets where they cross,. The lines draw in (scale from 0) when the section scrolls into view. */
+.grid-frame {
+  /* Half the distance between the two vertical lines: the page's outer frame. The cards sit 8px
+     inside it on phones and 16px from sm up. The content column (Container) is at most 1344px
+     wide, with 16px side padding on phones and 48px from sm up, so the frame is at most 1280px
+     wide with 32px margins. These are px on purpose: they do not follow the rem scale. */
+  --half: min(calc(50% - 8px), 632px);
+  --edge: rgb(var(--dot) / 0.06);
+  --corner: rgb(var(--dot) / 0.42);
+  --draw: 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (min-width: 640px) {
+  .grid-frame {
+    --half: min(calc(50% - 32px), 640px);
+  }
+}
+.grid-frame > span {
+  position: absolute;
+  pointer-events: none;
+}
+.gf-h {
+  right: 0;
+  left: 0;
+  height: 1px;
+  background: var(--edge);
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform var(--draw);
+}
+.gf-h.top {
+  top: 0;
+}
+.gf-v {
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--edge);
+  transform: scaleY(0);
+  transform-origin: top center;
+  transition: transform var(--draw) 0.15s;
+}
+.gf-v.l {
+  left: calc(50% - var(--half));
+}
+.gf-v.r {
+  left: calc(50% + var(--half) - 1px);
+}
+.gf-corner {
+  width: 10px;
+  height: 10px;
+  border: 0 solid var(--corner);
+  opacity: 0;
+  transition: opacity 0.7s ease 1s;
+}
+.gf-corner.tl {
+  top: 0;
+  left: calc(50% - var(--half));
+  border-top-width: 1px;
+  border-left-width: 1px;
+}
+.gf-corner.tr {
+  top: 0;
+  left: calc(50% + var(--half) - 10px);
+  border-top-width: 1px;
+  border-right-width: 1px;
+}
+.gf-corner.bl {
+  bottom: 0;
+  left: calc(50% - var(--half));
+  border-bottom-width: 1px;
+  border-left-width: 1px;
+}
+.gf-corner.br {
+  bottom: 0;
+  left: calc(50% + var(--half) - 10px);
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+}
+.grid-frame[data-in='true'] .gf-h {
+  transform: scaleX(1);
+}
+.grid-frame[data-in='true'] .gf-v {
+  transform: scaleY(1);
+}
+.grid-frame[data-in='true'] .gf-corner {
   opacity: 1;
 }
-html:has(dialog[open]) .cursor-dot,
-html:has(dialog[open]) .cursor-ring {
-  opacity: 0 !important;
+
+/* Small outlined section tag, like a label on a drawing. */
+.tag {
+  display: inline-block;
+  background: var(--card);
+  border: 1px solid rgb(var(--dot) / 0.32);
+  padding: 0.25rem 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  line-height: 1.2;
+  text-transform: uppercase;
+  color: var(--fg);
 }
 
-.cursor-dot {
-  width: 4px;
-  height: 4px;
-  margin: -2px 0 0 -2px;
-  border-radius: 9999px;
-  background: var(--color-amber-300);
-  transition:
-    opacity 0.25s ease,
-    background-color 0.25s ease,
-    scale 0.25s ease;
-}
-.cursor-dot[data-state='link'] {
-  background: var(--color-ember-400);
-}
-.cursor-dot[data-state='card'] {
-  background: var(--color-amber-300);
+/* Small blinking caret after the rotating role (see RotatingRole.tsx). With reduced motion the
+   role is static and the caret is not rendered. */
+.role-caret {
+  display: inline-block;
+  width: 2px;
+  height: 0.95em;
+  margin-left: 0.3em;
+  vertical-align: -0.12em;
+  background: var(--accent);
+  animation: caret-blink 1.05s steps(1) infinite;
 }
 
-/* The ring is thin, translucent and border-only, so labels underneath stay fully readable. */
-.cursor-ring {
-  width: 26px;
-  height: 26px;
-  margin: -13px 0 0 -13px;
-  border: 1px solid rgb(255 177 92 / 0.5);
-  border-radius: 9999px;
-  transition:
-    opacity 0.25s ease,
-    scale 0.3s cubic-bezier(0.22, 1, 0.36, 1),
-    border-color 0.3s ease,
-    background-color 0.3s ease;
+/* Brand logos on the skill chips (see Skills.tsx). Each logo sets --brand to its brand colour. The
+   colour is softened a little so it sits quietly on the chip; very light brands (yellows) are
+   darkened on the light theme, and near-black brands are lightened on the dark theme. */
+.skill-logo {
+  color: color-mix(in srgb, var(--brand) 86%, var(--bg));
 }
-.cursor-ring[data-state='link'] {
-  scale: 1.2;
-  border-color: rgb(255 122 48 / 0.85);
-  background-color: rgb(255 122 48 / 0.06);
+:root[data-theme='light'] .skill-logo[data-tone='light'] {
+  color: color-mix(in srgb, var(--brand) 60%, #1c1511);
 }
-.cursor-ring[data-state='card'] {
-  scale: 1.15;
-  border-color: rgb(255 177 92 / 0.6);
-  background-color: rgb(255 177 92 / 0.04);
+:root[data-theme='dark'] .skill-logo[data-tone='dark'] {
+  color: color-mix(in srgb, var(--brand) 30%, #f5ede7);
 }
-.cursor-ring[data-pressed='true'] {
-  scale: 0.9;
+:root[data-theme='dark'] .skill-logo[data-tone='dim'] {
+  color: color-mix(in srgb, var(--brand) 62%, #f5ede7);
+}
+@keyframes caret-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+/* Switching theme cross-fades the whole page (View Transitions; see lib/theme.ts). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.45s;
+  animation-timing-function: ease-in-out;
+}
+
+/* ---- Hover effects ---------------------------------------------------------------------------------
+   Desktop with a mouse only (hover: hover and pointer: fine), and never with reduced motion, so touch
+   devices and reduced-motion visitors get none of this. Everything uses transform-type properties
+   (scale, translate), so nothing shifts the layout or pushes a neighbour. */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  /* Cards and tiles: a slight zoom, a softer deeper shadow and a faint green edge glow. */
+  .hover-lift {
+    transition:
+      transform 0.2s ease-out,
+      scale 0.3s ease-out,
+      box-shadow 0.3s ease-out,
+      border-color 0.3s ease-out,
+      background-color 0.3s ease-out,
+      color 0.3s ease-out;
+  }
+  .hover-lift:hover {
+    scale: 1.015;
+    box-shadow:
+      0 22px 48px -26px rgb(0 0 0 / 0.35),
+      0 0 0 1px rgb(var(--glow) / 0.22),
+      0 0 28px -8px rgb(var(--glow) / 0.3);
+  }
+
+  /* Skill chips: a tiny lift. */
+  .chip-hover {
+    transition:
+      translate 0.2s ease-out,
+      scale 0.2s ease-out,
+      color 0.2s ease-out,
+      border-color 0.2s ease-out,
+      background-color 0.2s ease-out;
+  }
+  .chip-hover:hover {
+    translate: 0 -2px;
+    scale: 1.04;
+  }
+
+  /* The portrait: the photo zooms inside its circle (which keeps its size) and a soft green glow
+     appears. The ring of text also speeds up a little (see Portrait.tsx). */
+  .portrait-img {
+    transition: scale 0.4s ease-out;
+  }
+  .portrait-photo {
+    transition: box-shadow 0.4s ease-out;
+  }
+  .portrait:hover .portrait-img {
+    scale: 1.08;
+  }
+  .portrait:hover .portrait-photo {
+    box-shadow:
+      0 0 0 2px rgb(var(--glow) / 0.35),
+      0 0 64px -4px rgb(var(--glow) / 0.6);
+  }
+}
+
+/* ---- Generated project cover (see ProjectMedia.tsx): blueprint grid ---- */
+.project-cover {
+  background:
+    radial-gradient(circle at 50% 45%, rgb(var(--glow) / 0.16), transparent 62%), var(--card);
+}
+.project-cover-grid {
+  background-image:
+    linear-gradient(to right, rgb(var(--dot) / 0.08) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--dot) / 0.08) 1px, transparent 1px);
+  background-size: 20px 20px;
+  mask-image: radial-gradient(ellipse 85% 85% at 50% 45%, #000 25%, transparent 95%);
+}
+
+/* The card's picture zooms a little when the card is hovered (mouse only, never with reduced motion). */
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .project-cover-img {
+    transition: scale 0.4s ease-out;
+  }
+  .hover-lift:hover .project-cover-img {
+    scale: 1.05;
+  }
+}
+
+/* ---- Project status badges (see ProjectParts.tsx): a soft tinted pill with a dot of the same colour.
+   Light: the dot uses the exact brand colour and the text a slightly deeper shade, so it stays above
+   4.5:1 on the tint. Dark: a bright colour on a faint tint of itself. */
+.badge {
+  color: var(--badge-fg);
+  background: var(--badge-bg);
+  border-color: color-mix(in srgb, var(--badge-dot) 30%, transparent);
+}
+.badge-dot {
+  background: var(--badge-dot);
+}
+.badge-live {
+  --badge-fg: #b91c1c;
+  --badge-dot: #dc2626;
+  --badge-bg: #fee2e2;
+}
+.badge-completed {
+  --badge-fg: #15803d;
+  --badge-dot: #16a34a;
+  --badge-bg: #dcfce7;
+}
+.badge-building {
+  --badge-fg: #a16207;
+  --badge-dot: #a16207;
+  --badge-bg: #fef9c3;
+}
+:root[data-theme='dark'] .badge-live {
+  --badge-fg: #f87171;
+  --badge-dot: #f87171;
+  --badge-bg: rgb(248 113 113 / 0.12);
+}
+:root[data-theme='dark'] .badge-completed {
+  --badge-fg: #4ade80;
+  --badge-dot: #4ade80;
+  --badge-bg: rgb(74 222 128 / 0.12);
+}
+:root[data-theme='dark'] .badge-building {
+  --badge-fg: #facc15;
+  --badge-dot: #facc15;
+  --badge-bg: rgb(250 204 21 / 0.12);
 }

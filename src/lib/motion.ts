@@ -1,18 +1,20 @@
 import type { Variants } from 'motion/react'
 
-const ease = [0.22, 1, 0.36, 1] as const
+export const ease = [0.22, 1, 0.36, 1] as const
 
-/** `custom` is an optional start delay in seconds, used to stagger items in a grid. */
+/** Blur fade-in: from blur(12px), transparent and 24px low, to sharp. `custom` is a start delay in seconds. */
 export const fadeUp: Variants = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 24, filter: 'blur(12px)' },
   visible: (delay: number = 0) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.5, ease, delay },
+    filter: 'blur(0px)',
+    transition: { duration: 0.7, ease, delay },
   }),
 }
 
+/** Staggers children 80ms apart. */
 export const stagger: Variants = {
   hidden: {},
-  visible: { transition: { staggerChildren: 0.06 } },
+  visible: { transition: { staggerChildren: 0.08 } },
 }

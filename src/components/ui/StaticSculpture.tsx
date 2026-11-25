@@ -49,34 +49,23 @@ const links = buildLinks(SAMPLES, 9).map((link) => ({
   b: ribbons[link.b.ribbon][link.b.sample].center,
 }))
 const NODE_LINKS = links.filter((_, i) => i % 3 === 0)
-const ACCENT_NODES = new Set([2, 6, 8])
 
 export function StaticSculpture() {
   return (
     <div
       aria-hidden="true"
       data-static-visual
-      className="absolute inset-0 transition-opacity duration-700"
+      className="absolute inset-0 text-fg transition-opacity duration-700"
     >
-      <div className="absolute inset-[10%] rounded-full bg-ember-500/10 blur-[70px]" />
       <svg viewBox={`0 0 ${VIEW.width} ${VIEW.height}`} className="relative size-full" fill="none">
-        <defs>
-          {[0, 1, 2].map((k) => (
-            <linearGradient key={k} id={`sculpture-fill-${k}`} x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0" stopColor={k === 1 ? '#ffb15c' : '#ffd29a'} />
-              <stop offset="1" stopColor={k === 1 ? '#d9551a' : k === 2 ? '#ff7a30' : '#ffb15c'} />
-            </linearGradient>
-          ))}
-        </defs>
-
         {[0, 1, 2].map((k) => (
           <path
             key={k}
             d={outline(k)}
-            fill={`url(#sculpture-fill-${k})`}
-            fillOpacity={0.24}
-            stroke={`url(#sculpture-fill-${k})`}
-            strokeOpacity={0.6}
+            fill="currentColor"
+            fillOpacity={0.05 + k * 0.015}
+            stroke="currentColor"
+            strokeOpacity={0.35}
             strokeWidth={0.8}
             strokeLinejoin="round"
           />
@@ -89,8 +78,8 @@ export function StaticSculpture() {
             y1={a.y}
             x2={b.x}
             y2={b.y}
-            stroke="#ffb15c"
-            strokeOpacity={0.4}
+            stroke="currentColor"
+            strokeOpacity={0.22}
             strokeWidth={0.7}
           />
         ))}
@@ -101,8 +90,8 @@ export function StaticSculpture() {
             cx={a.x}
             cy={a.y}
             r={3}
-            fill={ACCENT_NODES.has(i) ? '#ff7a30' : i % 2 ? '#ffb15c' : '#ffd29a'}
-            fillOpacity={0.55 + a.depth * 0.4}
+            fill="currentColor"
+            fillOpacity={0.25 + a.depth * 0.4}
           />
         ))}
       </svg>

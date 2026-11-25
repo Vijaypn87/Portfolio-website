@@ -1,10 +1,22 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="dark" />
-    <meta name="theme-color" content="#0e0c0b" />
+    <meta name="color-scheme" content="light" />
+    <meta name="theme-color" content="#f8f4f0" />
+    <script>
+      // Light is the default for every first-time visitor (set on <html> above); the system light/dark
+      // setting is deliberately ignored. Dark applies only if the visitor chose it with the toggle,
+      // which is remembered. Done here, before first paint, so there is no flash.
+      try {
+        if (localStorage.getItem('theme') === 'dark') {
+          document.documentElement.dataset.theme = 'dark'
+          document.querySelector('meta[name="theme-color"]').content = '#0a0706'
+          document.querySelector('meta[name="color-scheme"]').content = 'dark'
+        }
+      } catch (e) {}
+    </script>
 
     <title>Vijay PN — AI/ML Engineer</title>
     <meta
@@ -22,7 +34,7 @@
     <meta property="og:title" content="Vijay PN — AI/ML Engineer" />
     <meta
       property="og:description"
-      content="AI/ML engineering graduate building intelligent applications, from RAG systems and computer vision to full-stack software."
+      content="I build intelligent applications using Python, PyTorch, React, FastAPI and RAG, focused on research-driven ideas and real-world impact."
     />
     <meta property="og:image:width" content="1200" />
     <meta property="og:image:height" content="630" />
@@ -31,7 +43,7 @@
     <meta name="twitter:title" content="Vijay PN — AI/ML Engineer" />
     <meta
       name="twitter:description"
-      content="AI/ML engineering graduate building intelligent applications, from RAG systems and computer vision to full-stack software."
+      content="I build intelligent applications using Python, PyTorch, React, FastAPI and RAG, focused on research-driven ideas and real-world impact."
     />
     <meta name="twitter:image:alt" content="Vijay PN, AI/ML Engineer. Portfolio." />
     <!-- site-meta -->
@@ -42,7 +54,12 @@
         "@type": "Person",
         "name": "Vijay PN",
         "jobTitle": "AI/ML Engineer",
-        "sameAs": ["https://github.com/Vijaypn87", "https://linkedin.com/in/vijaypnin"],
+        "sameAs": [
+          "https://github.com/Vijaypn87",
+          "https://linkedin.com/in/vijaypnin",
+          "https://x.com/Vijaypnin",
+          "https://www.reddit.com/user/vijaypnin/"
+        ],
         "knowsAbout": [
           "Machine learning",
           "RAG systems",
@@ -55,10 +72,10 @@
   <body>
     <div id="root"></div>
     <noscript>
-      <p style="padding: 2rem; color: #f6efe6; font-family: sans-serif">
+      <p style="padding: 2rem; color: #1c1511; font-family: sans-serif">
         Vijay PN is an AI/ML engineer. This portfolio needs JavaScript to display. You can find
-        Vijay on <a href="https://github.com/Vijaypn87" style="color: #ffb15c">GitHub</a> and
-        <a href="https://linkedin.com/in/vijaypnin" style="color: #ffb15c">LinkedIn</a>.
+        Vijay on <a href="https://github.com/Vijaypn87">GitHub</a> and
+        <a href="https://linkedin.com/in/vijaypnin">LinkedIn</a>.
       </p>
     </noscript>
     <script type="module" src="/src/main.tsx"></script>

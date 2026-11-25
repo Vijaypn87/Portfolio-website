@@ -5,12 +5,25 @@ import type { Profile } from '@/types'
 export const profile: Profile = {
   name: 'Vijay PN',
   role: 'AI / ML Engineer',
+  // The hero subtitle rotates through these, in order. The first one is also what shows when
+  // the visitor prefers reduced motion.
+  roles: ['AI / ML Engineer', 'Software Engineer', 'Full Stack Developer', 'RAG Systems Builder'],
 
   tagline:
-    'AI/ML engineering graduate building intelligent applications, from RAG systems and computer vision to full-stack software.',
+    'I build intelligent applications using Python, PyTorch, React, FastAPI and RAG, focused on research-driven ideas and real-world impact.',
+  // In the tagline: these names get a brand logo (same icons as the skill chips), these are just
+  // emphasised, and this phrase is set in the accent colour.
+  taglineTech: ['Python', 'PyTorch', 'React', 'FastAPI'],
+  taglineTerms: ['RAG'],
+  taglineAccent: 'research-driven ideas and real-world impact',
 
-  // Background removed from your illustrated portrait; the original stays in public/images.
-  photo: { src: '/images/profile.webp', alt: 'Illustrated portrait of Vijay PN in a red jacket' },
+  // Your photo, shown in a circle (square works best). If the file is ever missing,
+  // the older cut-out portrait below is used instead.
+  photo: {
+    src: '/images/vijay.webp',
+    fallbackSrc: '/images/profile.webp',
+    alt: 'Portrait of Vijay PN',
+  },
 
   // Adapted from the Summary on your resume.
   bio: [
@@ -27,10 +40,15 @@ export const profile: Profile = {
   ],
   technologies: ['Python', 'FastAPI', 'React', 'TypeScript', 'PyTorch'],
 
+  openToWork: true,
+  location: { city: 'Bengaluru', timeZone: 'Asia/Kolkata', abbr: 'IST' },
+
   email: 'vijaypn.in@gmail.com',
   resumeUrl: '/Vijaypn_Resume.pdf',
   socials: [
     { label: 'GitHub', href: 'https://github.com/Vijaypn87' },
     { label: 'LinkedIn', href: 'https://linkedin.com/in/vijaypnin' },
+    { label: 'X', href: 'https://x.com/Vijaypnin' },
+    { label: 'Reddit', href: 'https://www.reddit.com/user/vijaypnin/', handle: 'u/vijaypnin' },
   ],
 }

@@ -3,9 +3,12 @@ import { Container } from './Container'
 
 export function Footer() {
   return (
-    <footer className="border-t border-line py-8">
-      <Container className="text-sm text-ink-muted">
-        © {new Date().getFullYear()} {profile.name}
+    <footer className="border-t border-line pt-8 pb-28">
+      <Container className="label-mono flex flex-wrap justify-between gap-2 text-muted">
+        <span>
+          © {new Date().getFullYear()} {profile.name}
+        </span>
+        <span>{profile.location.city}, India</span>
       </Container>
     </footer>
   )

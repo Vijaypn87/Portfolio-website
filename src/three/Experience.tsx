@@ -24,47 +24,47 @@ function PointerLight() {
     light.current.position.y = MathUtils.damp(light.current.position.y, pointer.y * 3, 3, delta)
   })
   return (
-    <pointLight ref={light} position={[0, 0, 3.5]} intensity={18} distance={12} color="#ffb98a" />
+    <pointLight ref={light} position={[0, 0, 3.5]} intensity={18} distance={12} color="#ffffff" />
   )
 }
 
 /**
- * Procedural studio lighting (no external HDR file): a warm charcoal base with an amber key,
- * a deeper orange fill and an orange kicker, so the ribbons pick up soft, golden reflections.
+ * Procedural studio lighting (no external HDR file): a neutral charcoal base with soft white
+ * and grey lights, so the ribbons pick up quiet, silvery reflections.
  */
 function Studio() {
   return (
     <Environment resolution={256}>
-      <color attach="background" args={['#2a1a10']} />
+      <color attach="background" args={['#2a2a2a']} />
       <Lightformer
         form="rect"
         intensity={2.4}
-        color="#ffd9a8"
+        color="#f2f2f2"
         position={[0, 7, 0]}
         scale={[16, 6, 1]}
       />
       <Lightformer
         form="rect"
         intensity={2.0}
-        color="#ffd9a8"
+        color="#f2f2f2"
         position={[-7, 1, 2]}
         scale={[4, 9, 1]}
       />
       <Lightformer
         form="rect"
         intensity={1.8}
-        color="#ff9a4d"
+        color="#bdbdbd"
         position={[7, 0, 2]}
         scale={[3, 8, 1]}
       />
       <Lightformer
         form="rect"
         intensity={1.1}
-        color="#ff9a4d"
+        color="#bdbdbd"
         position={[0, -7, 1]}
         scale={[14, 3, 1]}
       />
-      <Lightformer form="ring" intensity={1.2} color="#ff7a30" position={[0, -2, -6]} scale={3} />
+      <Lightformer form="ring" intensity={1.2} color="#d9d9d9" position={[0, -2, -6]} scale={3} />
     </Environment>
   )
 }
@@ -89,7 +89,7 @@ export default function Experience({ tier, active, onReady, onFail, onDecline }:
       <PerformanceMonitor flipflops={3} onDecline={onDecline} />
       <ambientLight intensity={0.15} />
       <PointerLight />
-      <directionalLight position={[-3, 2, -4]} intensity={1.4} color="#ff7a30" />
+      <directionalLight position={[-3, 2, -4]} intensity={1.4} color="#d9d9d9" />
       <Studio />
       <Rig>
         <Sculpture tier={tier} />

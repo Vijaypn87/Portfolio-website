@@ -19,7 +19,7 @@ const EMPTY: ContactValues = { name: '', email: '', subject: '', message: '' }
 const ORDER: ContactField[] = ['name', 'email', 'subject', 'message']
 
 const control =
-  'w-full rounded-xl border bg-white/[0.03] px-4 py-3 text-base text-ink transition-colors duration-200 placeholder:text-ink-muted/60 hover:border-amber-400/40 focus:border-amber-400/70 focus:bg-white/[0.05] focus-visible:outline-offset-2'
+  'w-full rounded-xl border bg-white/[0.03] px-4 py-3 text-base text-ink transition-colors duration-200 placeholder:text-ink-muted/60 hover:border-accent/40 focus:border-accent/70 focus:bg-white/[0.05] focus-visible:outline-offset-2'
 
 function Field({
   id,
@@ -39,7 +39,7 @@ function Field({
       </label>
       {children}
       {error && (
-        <p id={`${id}-error`} className="mt-2 flex items-center gap-1.5 text-sm text-ember-400">
+        <p id={`${id}-error`} className="mt-2 flex items-center gap-1.5 text-sm text-danger">
           <CircleAlert aria-hidden="true" size={15} className="shrink-0" />
           {error}
         </p>
@@ -131,7 +131,7 @@ export function ContactForm({ email }: { email?: string }) {
     maxLength: LIMITS[field],
     'aria-invalid': errors[field] ? (true as const) : undefined,
     'aria-describedby': errors[field] ? `${id}-error` : undefined,
-    className: cn(control, errors[field] ? 'border-ember-500/70' : 'border-line'),
+    className: cn(control, errors[field] ? 'border-danger/70' : 'border-line'),
   })
 
   const messageProps = props('message', 'contact-message')
@@ -225,19 +225,19 @@ export function ContactForm({ email }: { email?: string }) {
 
       <div id="contact-status" role="status" aria-live="polite" className="min-h-6 text-sm">
         {status === 'invalid' && hasErrors && (
-          <p className="flex items-center gap-2 text-ember-400">
+          <p className="flex items-center gap-2 text-danger">
             <CircleAlert aria-hidden="true" size={16} className="shrink-0" />
             Please check the highlighted fields.
           </p>
         )}
         {status === 'success' && (
-          <p className="flex items-center gap-2 text-amber-300">
+          <p className="flex items-center gap-2 text-accent">
             <CircleCheck aria-hidden="true" size={16} className="shrink-0" />
             Thank you! Your message was sent.
           </p>
         )}
         {status === 'error' && (
-          <p className="flex items-start gap-2 text-ember-400">
+          <p className="flex items-start gap-2 text-danger">
             <CircleAlert aria-hidden="true" size={16} className="mt-0.5 shrink-0" />
             <span>
               Sorry, that didn&rsquo;t go through, and your message hasn&rsquo;t been sent. Please
@@ -256,7 +256,7 @@ export function ContactForm({ email }: { email?: string }) {
           </p>
         )}
         {status === 'mailto' && (
-          <p className="flex items-start gap-2 text-amber-300">
+          <p className="flex items-start gap-2 text-accent">
             <Mail aria-hidden="true" size={16} className="mt-0.5 shrink-0" />
             <span>
               Your email app should open with your message ready. It hasn&rsquo;t been sent yet:

@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
-import { useQualityTier } from './useQualityTier'
+import type { QualityTier } from './useQualityTier'
 
 // The whole WebGL stack (three, R3F, drei) lives in this lazy chunk, outside the initial bundle.
 const Experience = lazy(() => import('./Experience'))
@@ -20,15 +20,23 @@ function whenIdle(callback: () => void): () => void {
  * static sculpture first; this layer loads WebGL once the browser is idle, only if the device is
  * capable, and flags `data-webgl="ready"` on <html> so CSS can hand over from the static version.
  */
-export function SceneLayer() {
-  const { tier, downgrade } = useQualityTier()
+export function SceneLayer({
+  enabled,
+  tier,
+  downgrade,
+}: {
+  /** The 3D scene is opt-in: until this is true, nothing from the WebGL chunk is downloaded. */
+  enabled: boolean
+  tier: QualityTier
+  downgrade: () => void
+}) {
   const [idle, setIdle] = useState(false)
   const [ready, setReady] = useState(false)
   const [failed, setFailed] = useState(false)
   const [heroVisible, setHeroVisible] = useState(true)
   const [tabVisible, setTabVisible] = useState(true)
 
-  useEffect(() => whenIdle(() => setIdle(true)), [])
+  useEffect(() => (enabled ? whenIdle(() => setIdle(true)) : undefined), [enabled])
 
   // Stop rendering entirely when the hero is off-screen or the tab is hidden.
   useEffect(() => {
@@ -45,7 +53,7 @@ export function SceneLayer() {
     }
   }, [])
 
-  const useWebGL = tier !== 'static' && !failed
+  const useWebGL = enabled && tier !== 'static' && !failed
 
   // Hand over from the static sculpture only while WebGL is actually running.
   useEffect(() => {

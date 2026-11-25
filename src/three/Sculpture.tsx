@@ -20,16 +20,15 @@ import type { RenderTier } from './types'
 
 const { damp, smoothstep } = MathUtils
 
-// Amber-to-burnt-orange glass: light amber and amber for the body, burnt orange in the deeper
-// folds, and a warm orange for the light that travels along the links.
-const AMBER_LIGHT = new Color('#ffd29a')
-const AMBER = new Color('#ffb15c')
-const BURNT = new Color('#e5631a')
-const ORANGE = new Color('#ff7a30')
-const HIGHLIGHT = new Color('#fff3e2')
-const LINK_BASE = new Color('#ffb15c').multiplyScalar(0.34)
-const LINK_ORANGE = new Color('#ff8a45')
-const LINK_GLOW = new Color('#ffe2bd')
+// Neutral grey glass: mid-greys that read on both the light and the dark theme.
+const AMBER_LIGHT = new Color('#c4c4c4')
+const AMBER = new Color('#8f8f8f')
+const BURNT = new Color('#4d4d4d')
+const ORANGE = new Color('#a6a6a6')
+const HIGHLIGHT = new Color('#ffffff')
+const LINK_BASE = new Color('#8f8f8f').multiplyScalar(0.7)
+const LINK_ORANGE = new Color('#6b6b6b')
+const LINK_GLOW = new Color('#dcdcdc')
 
 /** Each ribbon turns about the shared axis at its own slow pace, so they keep re-weaving. */
 const SPEEDS = [0.045, -0.03, 0.06] as const
@@ -49,7 +48,7 @@ function ribbonTint(k: number, t: number, out: Color) {
     .lerp(ORANGE, smoothstep(t, 0.78, 1) * 0.5)
 }
 
-/** A strip of triangles along the ribbon, coloured amber to burnt orange along its length. */
+/** A strip of triangles along the ribbon, tinted along its length. */
 function ribbonGeometry(ribbon: RibbonSample[], k: number) {
   const n = ribbon.length
   const positions = new Float32Array(n * 2 * 3)

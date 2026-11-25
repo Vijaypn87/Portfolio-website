@@ -1,6 +1,6 @@
 /**
- * One shared requestAnimationFrame loop for every cosmetic pointer effect (the cursor ring, the
- * neural background). A task runs while it returns `true` and drops out as soon as it returns
+ * One shared requestAnimationFrame loop for every cosmetic pointer effect (the neural
+ * background). A task runs while it returns `true` and drops out as soon as it returns
  * `false`, and the loop itself stops when no task is left, so a quiet page runs no frames at all.
  */
 export type Task = (dt: number) => boolean
