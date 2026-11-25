@@ -17,7 +17,7 @@ export function Card({ className, children }: { className?: string; children: Re
     <div
       onPointerMove={onPointerMove}
       className={cn(
-        'hover-lift spotlight group/card relative overflow-hidden rounded-3xl border border-line bg-card transition-colors duration-300 hover:border-accent/30',
+        'hover-lift spotlight group/card relative overflow-hidden glass-box rounded-3xl border transition-colors duration-300 hover:border-accent/30',
         className,
       )}
     >

@@ -85,15 +85,10 @@ export function Contact() {
                 <li key={label}>
                   <a
                     href={href}
+                    data-cursor="frame"
                     {...(external ? { target: '_blank', rel: 'noopener noreferrer' } : {})}
-                    aria-label={
-                      label === 'Reddit'
-                        ? 'Reddit'
-                        : external
-                          ? `${label}: ${text} (opens in a new tab)`
-                          : `${label}: ${text}`
-                    }
-                    className="hover-lift group flex items-center gap-4 rounded-2xl border border-line bg-card p-4 transition duration-300 hover:border-accent/40 hover:bg-white/[0.06]"
+                    aria-label={external ? `Open ${label} profile` : `${label}: ${text}`}
+                    className="hover-lift group flex items-center gap-4 glass-box rounded-2xl border p-4 transition duration-300 hover:border-accent/40"
                   >
                     <span className="flex size-11 shrink-0 items-center justify-center rounded-full bg-accent/10 text-fg transition-colors duration-300 group-hover:bg-accent/15 group-hover:text-accent">
                       {icon}
@@ -115,7 +110,7 @@ export function Contact() {
         </Reveal>
 
         <Reveal delay={0.08} className="lg:col-span-7">
-          <div className="rounded-3xl border border-line bg-card p-6 sm:p-8">
+          <div className="glass-box rounded-3xl border p-6 sm:p-8">
             {canSend ? (
               <ContactForm email={email} />
             ) : (

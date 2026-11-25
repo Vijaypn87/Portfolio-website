@@ -2,7 +2,7 @@ import { ArrowUpRight } from 'lucide-react'
 import { Button } from '@/components/ui/Button'
 import { SkillMark } from '@/components/ui/SkillMark'
 import { GitHubIcon } from '@/components/ui/SocialIcons'
-import { useSkillIcons } from '@/hooks/useSkillIcons'
+import { useSkillIconSet } from '@/hooks/useSkillIcons'
 import { cn } from '@/lib/utils'
 import type { Project, ProjectStatus } from '@/types'
 
@@ -52,6 +52,7 @@ export function CategoryPill({ category }: { category: string }) {
 /** A few project technologies are the same brand as a skill with a slightly different name. */
 const ICON_ALIAS: Record<string, string> = {
   'React 19': 'React',
+  'HTML/CSS': 'HTML',
   'scikit-learn': 'Scikit-learn',
   pandas: 'Pandas',
   'Cloudflare Workers': 'Cloudflare',
@@ -66,9 +67,9 @@ interface TechChipsProps {
   compact?: boolean
 }
 
-/** The technology chips, with the same brand logos as the skills chips (a dot where there is none). */
+/** The technology chips, with the same logos as the skills chips (a line icon where there is no brand logo). */
 export function TechChips({ tech, max, compact = false }: TechChipsProps) {
-  const icons = useSkillIcons()
+  const icons = useSkillIconSet()
   const shown = max === undefined ? tech : tech.slice(0, max)
   const hidden = max === undefined ? [] : tech.slice(max)
   const chip = cn(
@@ -82,7 +83,7 @@ export function TechChips({ tech, max, compact = false }: TechChipsProps) {
     <ul aria-label="Technologies" className="flex flex-wrap gap-[6px]">
       {shown.map((name) => (
         <li key={name} className={chip}>
-          <SkillMark icon={icons?.[name] ?? icons?.[ICON_ALIAS[name]]} ready={icons !== null} />
+          <SkillMark name={name} alias={ICON_ALIAS[name]} set={icons} />
           {name}
         </li>
       ))}

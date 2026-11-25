@@ -46,7 +46,7 @@ export function ProjectDialog({ project, onClose }: ProjectDialogProps) {
       onClick={(event) => event.target === event.currentTarget && onClose()}
       aria-labelledby="project-dialog-title"
       data-lenis-prevent
-      className="project-dialog m-auto max-h-[88vh] w-[min(44rem,calc(100%-2rem))] overflow-y-auto rounded-3xl border border-line bg-card p-0 text-fg shadow-[0_40px_120px_-30px_rgb(0_0_0/0.8)] backdrop:bg-black/60 backdrop:backdrop-blur-sm"
+      className="project-dialog m-auto max-h-[88vh] w-[min(44rem,calc(100%-2rem))] overflow-y-auto glass-box rounded-3xl border p-0 text-fg shadow-[0_40px_120px_-30px_rgb(0_0_0/0.8)] backdrop:bg-black/60 backdrop:backdrop-blur-sm"
     >
       {project && (
         <div className="relative p-6 sm:p-9">

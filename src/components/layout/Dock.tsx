@@ -48,7 +48,7 @@ export function Dock() {
         hidden && 'translate-y-[calc(100%+2rem)]',
       )}
     >
-      <div className="pointer-events-auto flex items-center gap-1 rounded-full border border-line bg-card p-1.5 shadow-[0_12px_40px_-12px_rgb(0_0_0/0.6)]">
+      <div className="dock-glass pointer-events-auto flex items-center gap-1 rounded-full p-1.5">
         <ul className="flex items-center">
           {navItems.map(({ id, label }) => {
             const isActive = active === id
@@ -59,7 +59,9 @@ export function Dock() {
                   aria-current={isActive ? 'true' : undefined}
                   className={cn(
                     'label-mono flex min-h-[40px] items-center gap-1.5 rounded-full px-3 py-2.5 transition-colors duration-200 max-[379px]:px-[7px] max-[379px]:tracking-[0.05em] sm:px-4',
-                    isActive ? 'bg-accent/15 text-accent' : 'text-muted hover:text-fg',
+                    isActive
+                      ? 'bg-[rgb(var(--glow)/0.15)] text-accent'
+                      : 'text-muted hover:text-fg',
                   )}
                 >
                   {label}

@@ -264,36 +264,162 @@ html.lenis body {
   }
 }
 
-/* ---- Cursors: small inline SVGs, no JavaScript. White with a dark outline and a green accent, so
-   they read on light and dark pages alike. Hotspots are at the tip of the arrow and the fingertip. ---- */
-:root {
-  --cursor-default:
-    url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='20'%20height='20'%20viewBox='0%200%2020%2020'%3E%3Cpath%20d='M3.2%202.2V16l3.6-3.3%202.4%205.2%202.3-1.1-2.4-5.1H14z'%20fill='white'%20stroke='%230a0a0a'%20stroke-width='1.5'%20stroke-linejoin='round'/%3E%3Cpath%20d='M3.2%202.2v4.6l3.4-2.5z'%20fill='%2322c55e'/%3E%3C/svg%3E")
-      3 2,
-    auto;
-  --cursor-pointer:
-    url("data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='20'%20height='20'%20viewBox='0%200%2024%2024'%3E%3Cpath%20d='M8%204a1.6%201.6%200%200%201%203.2%200v6.2a1.7%201.7%200%200%201%201.3-.2%201.7%201.7%200%200%201%201.3.9%201.7%201.7%200%200%201%201.5-.1%201.7%201.7%200%200%201%201.1%201%201.6%201.6%200%200%201%201.6%201.6V16c0%203-2.3%205.4-5.3%205.4h-1.6c-1.7%200-3.2-.8-4.2-2.1l-3-4a1.5%201.5%200%200%201%202.2-2L8%2014.200z'%20fill='white'%20stroke='%230a0a0a'%20stroke-width='1.5'%20stroke-linejoin='round'/%3E%3Ccircle%20cx='9.600'%20cy='4.200'%20r='1.200'%20fill='%2322c55e'/%3E%3C/svg%3E")
-      8 2,
-    pointer;
-}
-html,
-body {
-  cursor: var(--cursor-default);
-}
+/* ---- Cursors: links and buttons show the hand (Tailwind's reset gives buttons an arrow). On a desktop
+   mouse the scope cursor (ScopeCursor.tsx) replaces the system cursor after the first mouse
+   movement, and not while a modal dialog is open (it sits above the scope cursor). ---- */
 a[href],
 button:not(:disabled),
 summary,
 label,
 [role='button'] {
-  cursor: var(--cursor-pointer);
+  cursor: pointer;
 }
-input:not([type='checkbox'], [type='radio'], [type='submit']),
-textarea,
-[contenteditable='true'] {
-  cursor: text;
+
+/* ---- Scope cursor (desktop mouse only; see ScopeCursor.tsx): four green L-shaped brackets ---- */
+html.scope-hide,
+html.scope-hide * {
+  cursor: none !important;
 }
-select {
-  cursor: auto;
+html:has(dialog[open]) * {
+  cursor: auto !important;
+}
+html:has(dialog[open]) .scope-cursor {
+  opacity: 0;
+}
+.scope-cursor,
+.scope-cursor * {
+  pointer-events: none;
+}
+.scope-cursor {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+.scope-cursor[data-visible='true'] {
+  opacity: 1;
+}
+.scope-corner {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 10px;
+  height: 10px;
+  border: 0 solid var(--accent);
+  will-change: transform;
+  transition: opacity 0.15s ease;
+}
+.scope-cursor[data-mode='text'] .scope-corner {
+  opacity: 0;
+}
+.scope-corner.tl {
+  border-top-width: 1.5px;
+  border-left-width: 1.5px;
+}
+.scope-corner.tr {
+  border-top-width: 1.5px;
+  border-right-width: 1.5px;
+}
+.scope-corner.bl {
+  border-bottom-width: 1.5px;
+  border-left-width: 1.5px;
+}
+.scope-corner.br {
+  border-right-width: 1.5px;
+  border-bottom-width: 1.5px;
+}
+/* The dot sits exactly at the mouse. Over text it morphs into a thin vertical line; over a framed
+   control it hides. */
+.scope-dot-wrap {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 0;
+  will-change: transform;
+}
+.scope-dot {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 4px;
+  border-radius: 9999px;
+  background: var(--accent);
+  transform: translate(-50%, -50%);
+  transition:
+    width 0.2s ease,
+    height 0.2s ease,
+    border-radius 0.2s ease,
+    opacity 0.15s ease;
+}
+.scope-cursor[data-mode='text'] .scope-dot {
+  width: 2px;
+  height: 20px;
+  border-radius: 1px;
+}
+.scope-cursor[data-mode='frame'] .scope-dot {
+  opacity: 0;
+}
+
+/* ---- Frosted glass boxes (cards, tiles, the details dialog): the code background behind is blurred
+   into a soft haze. Without backdrop-filter support they are near-solid. Inner chips and buttons
+   stay plain translucent (no blur inside blur). In the components layer, so utilities such as
+   hover:border-accent/30 and shadow-* still win. ---- */
+@layer components {
+  .glass-box {
+    background: rgb(255 255 255 / 0.92);
+    border-color: rgb(255 255 255 / 0.7);
+    box-shadow:
+      0 8px 30px rgb(0 0 0 / 0.08),
+      inset 0 1px 0 rgb(255 255 255 / 0.5);
+  }
+  :root:not([data-theme='light']) .glass-box {
+    background: rgb(18 18 18 / 0.92);
+    border-color: rgb(255 255 255 / 0.1);
+    box-shadow:
+      0 8px 30px rgb(0 0 0 / 0.08),
+      inset 0 1px 0 rgb(255 255 255 / 0.06);
+  }
+  @supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+    .glass-box {
+      background: rgb(255 255 255 / 0.72);
+      -webkit-backdrop-filter: blur(24px) saturate(160%);
+      backdrop-filter: blur(24px) saturate(160%);
+    }
+    :root:not([data-theme='light']) .glass-box {
+      background: rgb(18 18 18 / 0.7);
+    }
+  }
+}
+
+/* ---- The floating nav (see Dock.tsx): frosted glass, the one exception to the solid-box rule. Without
+   backdrop-filter support it is a near-solid pill, so the text always stays readable. ---- */
+.dock-glass {
+  background: rgb(255 255 255 / 0.92);
+  border: 1px solid rgb(255 255 255 / 0.6);
+  box-shadow:
+    0 8px 32px rgb(0 0 0 / 0.12),
+    inset 0 1px 0 rgb(255 255 255 / 0.5);
+}
+:root:not([data-theme='light']) .dock-glass {
+  background: rgb(20 20 20 / 0.92);
+  border-color: rgb(255 255 255 / 0.12);
+  box-shadow:
+    0 8px 32px rgb(0 0 0 / 0.12),
+    inset 0 1px 0 rgb(255 255 255 / 0.08);
+}
+@supports (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px)) {
+  .dock-glass {
+    background: rgb(255 255 255 / 0.55);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    backdrop-filter: blur(16px) saturate(180%);
+  }
+  :root:not([data-theme='light']) .dock-glass {
+    background: rgb(20 20 20 / 0.5);
+  }
 }
 
 /* ---- Cards: a soft spotlight that follows the pointer (see Card.tsx) ---- */
@@ -323,6 +449,13 @@ select {
 }
 .ring-spin {
   animation: ring-spin 48s linear infinite;
+}
+
+.map-stop-india {
+  stop-opacity: var(--map-india-opacity);
+}
+.map-stop-karnataka {
+  stop-opacity: var(--map-karnataka-opacity);
 }
 
 /* Pulse for status dots and the map pin. */
@@ -373,13 +506,17 @@ dialog.project-dialog[open]::backdrop {
 
 /* ---- Location card: map colours and the pulsing pin (see LocationCard.tsx) ---- */
 :root {
-  --map-fill: rgb(255 255 255 / 0.07);
   --map-stroke: rgb(255 255 255 / 0.4);
+  --map-stroke-state: rgb(255 255 255 / 0.6);
+  --map-india-opacity: 0.18;
+  --map-karnataka-opacity: 0.28;
   --pin: #22c55e;
 }
 :root[data-theme='light'] {
-  --map-fill: #e8e4e0;
   --map-stroke: #9a938d;
+  --map-stroke-state: #6f6862;
+  --map-india-opacity: 1;
+  --map-karnataka-opacity: 1;
   --pin: #16a34a;
 }
 @keyframes pin-ring {

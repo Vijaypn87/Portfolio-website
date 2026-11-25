@@ -6,7 +6,7 @@ import { Card } from '@/components/ui/Card'
 import { SectionTag } from '@/components/ui/SectionTag'
 import { SkillMark } from '@/components/ui/SkillMark'
 import { useColumnCount } from '@/hooks/useColumnCount'
-import { useSkillIcons } from '@/hooks/useSkillIcons'
+import { useSkillIconSet } from '@/hooks/useSkillIcons'
 import { ease, fadeUp } from '@/lib/motion'
 import { LocationCard } from './LocationCard'
 
@@ -27,7 +27,7 @@ const chip: Variants = {
  * pop in one by one when their group scrolls into view, and their brand logos load in a separate chunk.
  */
 export function Skills() {
-  const icons = useSkillIcons()
+  const icons = useSkillIconSet()
   const count = useColumnCount()
   const columns = skillColumns[count].map((ids) =>
     ids
@@ -78,7 +78,7 @@ export function Skills() {
                             variants={chip}
                             className="chip-hover flex h-[27px] items-center gap-[6px] rounded-lg border border-line bg-bg/40 px-[10px] font-mono text-[12px] leading-none text-fg transition-colors duration-200 hover:border-accent/60 hover:text-accent"
                           >
-                            <SkillMark icon={icons?.[skill]} ready={icons !== null} />
+                            <SkillMark name={skill} set={icons} />
                             {skill}
                           </m.li>
                         ))}

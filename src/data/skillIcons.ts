@@ -1,44 +1,73 @@
+import type { ComponentType } from 'react'
+import {
+  Binary,
+  Box,
+  Boxes,
+  ChartLine,
+  Cpu,
+  Database,
+  Eye,
+  Network,
+  ScanEye,
+  Search,
+  Terminal,
+  TreeDeciduous,
+  Video,
+  Webhook,
+} from 'lucide-react'
 import {
   siCloudflare,
   siCss,
   siDjango,
+  siDocker,
   siExpress,
   siFastapi,
+  siFigma,
   siFlask,
   siGit,
   siGithub,
   siGoogleearthengine,
+  siGooglegemini,
   siHtml5,
   siJavascript,
+  siLeaflet,
+  siMaplibre,
   siMongodb,
   siMysql,
   siNetlify,
   siNodedotjs,
   siNumpy,
+  siAnthropic,
+  siClaudecode,
+  siOllama,
   siOpencv,
   siPandas,
   siPython,
   siPytorch,
   siRailway,
   siReact,
+  siReactrouter,
   siRender,
   siScikitlearn,
   siSqlite,
   siStreamlit,
   siSupabase,
   siTailwindcss,
+  siTanstack,
+  siThreedotjs,
   siTypescript,
   siUltralytics,
   siVercel,
   siVite,
+  siVitest,
   type SimpleIcon,
 } from 'simple-icons'
+import { AfterEffectsBadge, PhotoshopBadge, PremiereBadge } from '@/components/ui/AdobeBadge'
 
 /**
  * Official brand icons from Simple Icons (https://simpleicons.org), by skill name as it is written
- * in data/skills.ts. A skill with no entry here (a concept such as "Computer Vision", or a brand
- * Simple Icons does not have, such as Chroma and XGBoost) gets a small neutral dot instead: no
- * logos are invented or drawn by hand. SQL is a language, not a product, so it has none either.
+ * in data/skills.ts. A skill with no entry here has a line icon in `lineIcons` below instead: no logos
+ * are invented or drawn by hand.
  *
  * This file is loaded lazily (see useSkillIcons), so the icons stay out of the main bundle.
  */
@@ -75,6 +104,52 @@ const brands: Record<string, SimpleIcon> = {
   Netlify: siNetlify,
   Supabase: siSupabase,
   Cloudflare: siCloudflare,
+  Figma: siFigma,
+  Docker: siDocker,
+  'React Router': siReactrouter,
+  'TanStack Start': siTanstack,
+  'Anthropic SDK (Claude API)': siAnthropic,
+  'Claude Code hooks': siClaudecode,
+  Vitest: siVitest,
+  'Three.js': siThreedotjs,
+  Ollama: siOllama,
+  'Google Gemini': siGooglegemini,
+  Leaflet: siLeaflet,
+  'MapLibre GL': siMaplibre,
+}
+
+/**
+ * A simple line icon (or, for the Adobe apps, a badge in Adobe's style) for every skill or technology
+ * with no official logo (concepts, and brands Simple Icons does not carry, such as Matplotlib), so no chip is left without an icon.
+ */
+export const lineIcons: Record<string, IconComponent> = {
+  SQL: Database,
+  Chroma: Database,
+  ChromaDB: Database,
+  'React Three Fiber': Box,
+  RAG: Search,
+  'Computer Vision': Eye,
+  XGBoost: TreeDeciduous,
+  Matplotlib: ChartLine,
+  'REST APIs': Webhook,
+  'Data Structures & Algorithms': Binary,
+  'Object-Oriented Programming': Boxes,
+  'Operating Systems': Cpu,
+  'Computer Networks': Network,
+  'Adobe Photoshop': PhotoshopBadge,
+  'Adobe Premiere Pro': PremiereBadge,
+  'Adobe After Effects': AfterEffectsBadge,
+  ByteTrack: ScanEye,
+  'Commander.js': Terminal,
+  VideoMAE: Video,
+}
+
+/** A mark drawn at `size` px: a Lucide line icon or one of our own badges. */
+type IconComponent = ComponentType<{ size?: number; strokeWidth?: number; className?: string }>
+
+export interface SkillIconSet {
+  brands: Record<string, SkillIcon>
+  lines: Record<string, IconComponent>
 }
 
 export interface SkillIcon {

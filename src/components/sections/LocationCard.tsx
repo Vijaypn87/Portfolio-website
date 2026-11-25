@@ -1,5 +1,6 @@
+import { useId } from 'react'
 import * as m from 'motion/react-m'
-import { BENGALURU_POINT, INDIA_OUTLINE_PATH, INDIA_VIEWBOX } from '@/data/indiaMap'
+import { BENGALURU_POINT, INDIA_OUTLINE_PATH, INDIA_VIEWBOX, KARNATAKA_PATH } from '@/data/indiaMap'
 import { profile } from '@/data/profile'
 import { Card } from '@/components/ui/Card'
 import { useClock } from '@/hooks/useClock'
@@ -16,6 +17,14 @@ export function LocationCard() {
   const { city, timeZone } = profile.location
   const time = useClock(timeZone, { seconds: true, intervalMs: 1000 })
   const reduced = useReducedMotion()
+  const gradients = useId()
+  const indiaFill = `${gradients}-india`
+  const karnatakaFill = `${gradients}-karnataka`
+  const reveal = {
+    initial: reduced ? false : { fillOpacity: 0 },
+    whileInView: { fillOpacity: 1 },
+    viewport: { once: true, margin: '-60px' },
+  } as const
 
   return (
     <Card className="h-full">
@@ -37,9 +46,23 @@ export function LocationCard() {
               aria-label={`Outline map of India with a pin on ${city}`}
               className="absolute inset-0 size-full overflow-visible"
             >
+              <defs>
+                {/* Soft saffron to near-white to green (India), and yellow to red (Karnataka). The
+                    stop opacity comes from CSS, so dark mode uses the same colours, fainter. */}
+                <linearGradient id={indiaFill} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stopColor="#FFE8D1" className="map-stop-india" />
+                  <stop offset="0.5" stopColor="#FFFDF9" className="map-stop-india" />
+                  <stop offset="1" stopColor="#DFF3E3" className="map-stop-india" />
+                </linearGradient>
+                <linearGradient id={karnatakaFill} x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="0" stopColor="#FFF4B8" className="map-stop-karnataka" />
+                  <stop offset="1" stopColor="#FFD6D6" className="map-stop-karnataka" />
+                </linearGradient>
+              </defs>
               <m.path
                 d={INDIA_OUTLINE_PATH}
-                style={{ fill: 'var(--map-fill)', stroke: 'var(--map-stroke)' }}
+                fill={`url(#${indiaFill})`}
+                style={{ stroke: 'var(--map-stroke)' }}
                 strokeWidth={2.2}
                 strokeLinejoin="round"
                 initial={reduced ? false : { pathLength: 0, fillOpacity: 0 }}
@@ -49,6 +72,15 @@ export function LocationCard() {
                   pathLength: { duration: 2, ease: 'easeInOut' },
                   fillOpacity: { duration: 0.8, delay: 1.5 },
                 }}
+              />
+              <m.path
+                d={KARNATAKA_PATH}
+                fill={`url(#${karnatakaFill})`}
+                style={{ stroke: 'var(--map-stroke-state)' }}
+                strokeWidth={1.4}
+                strokeLinejoin="round"
+                {...reveal}
+                transition={{ fillOpacity: { duration: 0.8, delay: 1.7 } }}
               />
               <g transform={`translate(${x} ${y})`}>
                 <circle r="6" className="pin-ring" />

@@ -6,7 +6,8 @@ import path from 'node:path'
 /**
  * Adds the tags that need the site's absolute address (canonical link, og:url and the social
  * preview image) when VITE_SITE_URL is set to the deployed https address. Without it they are
- * simply left out, rather than guessing a domain.
+ * simply left out, rather than guessing a domain. On Vercel the production address is filled in
+ * automatically from VERCEL_PROJECT_PRODUCTION_URL, so the preview image works with no setup.
  */
 function siteMeta(siteUrl: string | undefined): Plugin {
   const base = siteUrl?.trim().replace(/\/+$/, '')
@@ -32,8 +33,10 @@ function siteMeta(siteUrl: string | undefined): Plugin {
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), 'VITE_')
+  const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL
+  const siteUrl = env.VITE_SITE_URL || (vercelUrl ? `https://${vercelUrl}` : undefined)
   return {
-    plugins: [react(), tailwindcss(), siteMeta(env.VITE_SITE_URL)],
+    plugins: [react(), tailwindcss(), siteMeta(siteUrl)],
     resolve: {
       alias: { '@': path.resolve(import.meta.dirname, 'src') },
     },

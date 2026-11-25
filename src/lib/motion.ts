@@ -10,6 +10,9 @@ export const fadeUp: Variants = {
     y: 0,
     filter: 'blur(0px)',
     transition: { duration: 0.7, ease, delay },
+    // Once settled, drop the filter entirely: even blur(0px) makes the wrapper a "backdrop root",
+    // which stops the frosted-glass boxes inside it from blurring the page behind them.
+    transitionEnd: { filter: 'none' },
   }),
 }
 

@@ -47,6 +47,7 @@ export const skillGroups: SkillGroup[] = [
       'YOLOv8',
       'NumPy',
       'Pandas',
+      'Matplotlib',
       'Streamlit',
     ],
   },
@@ -60,6 +61,11 @@ export const skillGroups: SkillGroup[] = [
     title: 'Deployment & Cloud Platforms',
     skills: ['Vercel', 'Render', 'Railway', 'Netlify', 'Supabase', 'Cloudflare'],
   },
+  {
+    id: 'design-media',
+    title: 'Design & Media',
+    skills: ['Figma', 'Adobe Photoshop', 'Adobe Premiere Pro', 'Adobe After Effects'],
+  },
 ]
 
 /**
@@ -71,11 +77,11 @@ export const skillColumns: Record<1 | 2 | 3, string[][]> = {
   3: [
     ['languages', 'web'],
     ['core-cs', 'data-tools'],
-    ['ai-ml', 'deployment'],
+    ['ai-ml', 'deployment', 'design-media'],
   ],
   2: [
     ['languages', 'web', 'core-cs'],
-    ['ai-ml', 'data-tools', 'deployment'],
+    ['ai-ml', 'data-tools', 'deployment', 'design-media'],
   ],
-  1: [['languages', 'web', 'core-cs', 'ai-ml', 'data-tools', 'deployment']],
+  1: [['languages', 'web', 'core-cs', 'ai-ml', 'data-tools', 'deployment', 'design-media']],
 }

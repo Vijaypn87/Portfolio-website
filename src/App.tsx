@@ -7,6 +7,7 @@ import { Hero } from '@/components/sections/Hero'
 import { Projects } from '@/components/sections/Projects'
 import { Skills } from '@/components/sections/Skills'
 import { AmbientBackground } from '@/components/ui/AmbientBackground'
+import { ScopeCursor } from '@/components/ui/ScopeCursor'
 import { ErrorBoundary } from '@/components/ui/ErrorBoundary'
 import { useSmoothScroll } from '@/hooks/useSmoothScroll'
 import { introWillRun, setIntroStage } from '@/lib/intro'
@@ -53,6 +54,7 @@ export default function App() {
           <Footer />
         </div>
         <Dock />
+        <ScopeCursor />
       </MotionConfig>
     </LazyMotion>
   )
