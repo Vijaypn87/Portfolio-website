@@ -27,7 +27,7 @@ export const profile: Profile = {
 
   // Adapted from the Summary on your resume.
   bio: [
-    'I am an AI/ML Engineering graduate with hands-on experience in Python, full-stack development, machine learning and RAG-based applications.',
+    'I am an AI/ML engineer with hands-on experience in Python, full-stack development, machine learning and RAG-based applications.',
     'I have built and deployed real-world AI and web applications through internships and projects.',
     'I am looking for entry-level Software Engineer, Python Developer or AI/ML Engineer opportunities.',
   ],

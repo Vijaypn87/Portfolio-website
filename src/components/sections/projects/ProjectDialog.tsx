@@ -46,18 +46,21 @@ export function ProjectDialog({ project, onClose }: ProjectDialogProps) {
       onClick={(event) => event.target === event.currentTarget && onClose()}
       aria-labelledby="project-dialog-title"
       data-lenis-prevent
-      className="project-dialog m-auto max-h-[88vh] w-[min(44rem,calc(100%-2rem))] overflow-y-auto glass-box rounded-3xl border p-0 text-fg shadow-[0_40px_120px_-30px_rgb(0_0_0/0.8)] backdrop:bg-black/60 backdrop:backdrop-blur-sm"
+      className="project-dialog m-auto max-h-[88vh] w-[min(44rem,calc(100%-2rem))] overflow-y-auto glass-box rounded-3xl border p-0 text-fg max-sm:h-dvh max-sm:max-h-none max-sm:w-full max-sm:max-w-none max-sm:rounded-none max-sm:border-0 shadow-[0_40px_120px_-30px_rgb(0_0_0/0.8)] backdrop:bg-black/60 backdrop:backdrop-blur-sm"
     >
       {project && (
         <div className="relative p-6 sm:p-9">
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close project details"
-            className="absolute top-4 right-4 inline-flex size-10 items-center justify-center rounded-full border border-line text-muted transition hover:border-accent/60 hover:text-fg"
-          >
-            <X aria-hidden="true" size={18} />
-          </button>
+          {/* Stays at the top of the dialog while its content scrolls, so closing is always one tap away. */}
+          <div className="sticky top-3 z-10 -mb-11 flex justify-end">
+            <button
+              type="button"
+              onClick={onClose}
+              aria-label="Close project details"
+              className="inline-flex size-11 items-center justify-center rounded-full border border-line bg-card text-muted transition hover:border-accent/60 hover:text-fg"
+            >
+              <X aria-hidden="true" size={18} />
+            </button>
+          </div>
 
           <div className="flex flex-wrap items-center gap-2 pr-12">
             <CategoryPill category={project.category} />

@@ -54,10 +54,6 @@
      and are removed in the final cleanup. */
   --color-ink: var(--fg);
   --color-ink-muted: var(--muted);
-  --color-night-950: var(--bg);
-  --color-night-900: var(--bg);
-  --color-night-800: var(--card);
-  --color-night-700: var(--card);
 
   --font-sans: 'Inter Variable', ui-sans-serif, system-ui, sans-serif;
   --font-display: 'Space Grotesk Variable', 'Inter Variable', ui-sans-serif, sans-serif;
@@ -362,6 +358,15 @@ html:has(dialog[open]) .scope-cursor {
 }
 .scope-cursor[data-mode='frame'] .scope-dot {
   opacity: 0;
+}
+
+/* ---- Touch screens: every link and button is at least 44px tall and wide (inline links inside
+   paragraphs and the hidden skip link excepted). ---- */
+@media (pointer: coarse) {
+  :where(a[href], button, summary, [role='button']):not(p a, .sr-only) {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
 
 /* ---- Frosted glass boxes (cards, tiles, the details dialog): the code background behind is blurred
