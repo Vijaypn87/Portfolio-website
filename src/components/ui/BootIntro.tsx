@@ -240,29 +240,37 @@ export default function BootIntro() {
         )}
       </div>
 
-      {/* The word. It sits above the overlay so it can fly over the opening halves. */}
+      {/* The word. It sits above the overlay so it can fly over the opening halves. Every version
+          is stacked in the same full-screen layer and centred on its own (never in a shared box
+          whose width changes with the words in it), with one font size and one fixed line height,
+          so no version shifts or jumps, including the final English "Vijay". */}
       {flying && (
-        <div className="pointer-events-none fixed inset-0 z-[101] grid place-items-center">
-          <div aria-hidden="true" className="grid [&>*]:col-start-1 [&>*]:row-start-1">
-            <AnimatePresence initial={false}>
-              <m.span
-                key={index}
+        <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[101]">
+          <AnimatePresence initial={false}>
+            <m.div
+              key={index}
+              initial={{ opacity: 0, filter: 'blur(12px)' }}
+              animate={{ opacity: 1, filter: 'blur(0px)' }}
+              exit={{ opacity: 0, filter: 'blur(12px)' }}
+              transition={{ duration: 0.18 }}
+              className="absolute inset-0 flex items-center justify-center text-center"
+            >
+              <span
                 ref={index === LAST ? word : undefined}
-                initial={{ opacity: 0, filter: 'blur(12px)' }}
-                animate={{ opacity: 1, filter: 'blur(0px)' }}
-                exit={{ opacity: 0, filter: 'blur(12px)' }}
-                transition={{ duration: 0.18 }}
                 style={{
                   fontFamily: current.font,
                   letterSpacing: index === LAST ? '-0.05em' : undefined,
+                  // Tight tracking leaves the last letter hanging 0.05em past the box; nudge it back so
+                  // the English word is optically centred like the others.
+                  left: index === LAST ? '-0.025em' : undefined,
                   transformOrigin: '0 0',
                 }}
-                className="block text-[clamp(3.25rem,14vw,9rem)] leading-[0.9] font-bold whitespace-nowrap text-white"
+                className="relative inline-block text-[clamp(3.25rem,14vw,9rem)] leading-[1.15] font-bold whitespace-nowrap text-white"
               >
                 {current.text}
-              </m.span>
-            </AnimatePresence>
-          </div>
+              </span>
+            </m.div>
+          </AnimatePresence>
         </div>
       )}
     </>
