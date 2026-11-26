@@ -155,7 +155,12 @@ export function Hero() {
 
                 <m.ul variants={fadeUp} className="mt-9 flex flex-wrap gap-x-2 gap-y-4">
                   <li>
-                    <Button href={profile.resumeUrl} download magnetic>
+                    <Button
+                      href={profile.resumeUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      magnetic
+                    >
                       <Download aria-hidden="true" size={16} />
                       Resume
                     </Button>
