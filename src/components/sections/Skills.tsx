@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react'
 import type { Variants } from 'motion/react'
 import * as m from 'motion/react-m'
 import { skillColumns, skillGroups } from '@/data/skills'
@@ -6,7 +7,9 @@ import { Card } from '@/components/ui/Card'
 import { SectionTag } from '@/components/ui/SectionTag'
 import { SkillMark } from '@/components/ui/SkillMark'
 import { useColumnCount } from '@/hooks/useColumnCount'
+import { useReveal } from '@/hooks/useReveal'
 import { useSkillIconSet } from '@/hooks/useSkillIcons'
+import { INTRO_STAGGER } from '@/lib/intro'
 import { ease, fadeUp } from '@/lib/motion'
 import { LocationCard } from './LocationCard'
 
@@ -20,6 +23,22 @@ const chip: Variants = {
   visible: { opacity: 1, scale: 1, y: 0, transition: { duration: 0.4, ease } },
 }
 
+/** One group's chips, popping in one by one once the group is in view (and the intro has closed). */
+function ChipList({ children }: { children: ReactNode }) {
+  const [ref, ready] = useReveal<HTMLUListElement>('-60px')
+  return (
+    <m.ul
+      ref={ref}
+      variants={chips}
+      initial="hidden"
+      animate={ready ? 'visible' : 'hidden'}
+      className="mt-[8px] flex flex-wrap content-start items-start gap-[6px]"
+    >
+      {children}
+    </m.ul>
+  )
+}
+
 /**
  * 02 / skills: a bento row with the location card beside a card of skills grouped by category. The
  * categories sit in 3 columns on wide screens, 2 on tablets and 1 on phones: each column is its own
@@ -27,6 +46,7 @@ const chip: Variants = {
  * pop in one by one when their group scrolls into view, and their brand logos load in a separate chunk.
  */
 export function Skills() {
+  const [row, rowReady] = useReveal('-80px')
   const icons = useSkillIconSet()
   const count = useColumnCount()
   const columns = skillColumns[count].map((ids) =>
@@ -38,10 +58,11 @@ export function Skills() {
   return (
     <Section id="skills">
       <m.div
+        ref={row}
         variants={fadeUp}
+        custom={INTRO_STAGGER}
         initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: '-80px' }}
+        animate={rowReady ? 'visible' : 'hidden'}
         className="grid gap-4 sm:gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.9fr)] wide:grid-cols-[minmax(0,1fr)_minmax(0,2.3fr)]"
       >
         <LocationCard />
@@ -65,13 +86,7 @@ export function Skills() {
                       >
                         {group.title}
                       </h3>
-                      <m.ul
-                        variants={chips}
-                        initial="hidden"
-                        whileInView="visible"
-                        viewport={{ once: true, margin: '-60px' }}
-                        className="mt-[8px] flex flex-wrap content-start items-start gap-[6px]"
-                      >
+                      <ChipList>
                         {group.skills.map((skill) => (
                           <m.li
                             key={skill}
@@ -82,7 +97,7 @@ export function Skills() {
                             {skill}
                           </m.li>
                         ))}
-                      </m.ul>
+                      </ChipList>
                     </section>
                   ))}
                 </div>

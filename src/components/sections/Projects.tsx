@@ -2,20 +2,22 @@ import { useState } from 'react'
 import * as m from 'motion/react-m'
 import { projects } from '@/data/projects'
 import { Section } from '@/components/layout/Section'
+import { useReveal } from '@/hooks/useReveal'
 import { SectionHeading } from '@/components/layout/SectionHeading'
 import { fadeUp } from '@/lib/motion'
 import type { Project } from '@/types'
 import { ProjectCard } from './projects/ProjectCard'
 import { ProjectDialog } from './projects/ProjectDialog'
 
-/** A card that fades up (blur to sharp) the first time it scrolls into view. */
+/** A card that fades up (blur to sharp) the first time it scrolls into view, after the intro. */
 function Reveal({ children }: { children: React.ReactNode }) {
+  const [ref, ready] = useReveal<HTMLLIElement>('-60px')
   return (
     <m.li
+      ref={ref}
       variants={fadeUp}
       initial="hidden"
-      whileInView="visible"
-      viewport={{ once: true, margin: '-60px' }}
+      animate={ready ? 'visible' : 'hidden'}
       className="min-w-0"
     >
       {children}

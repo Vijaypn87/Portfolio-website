@@ -1,4 +1,4 @@
-import { lazy, Suspense, useEffect } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { domAnimation, LazyMotion, MotionConfig } from 'motion/react'
 import { Dock } from '@/components/layout/Dock'
 import { Footer } from '@/components/layout/Footer'
@@ -17,12 +17,18 @@ const BootIntro = lazy(() => import('@/components/ui/BootIntro'))
 
 export default function App() {
   useSmoothScroll()
+  const [introGone, setIntroGone] = useState(false)
 
   // Safety net: if the loader never finishes (a failed download, say), show the page anyway.
   useEffect(() => {
     if (!introWillRun) return
-    const id = window.setTimeout(() => setIntroStage('landed'), 9000)
-    return () => window.clearTimeout(id)
+    const show = window.setTimeout(() => setIntroStage('landed'), 9000)
+    // A little later, remove the loader itself, which releases its scroll lock and its cover.
+    const remove = window.setTimeout(() => setIntroGone(true), 14000)
+    return () => {
+      window.clearTimeout(show)
+      window.clearTimeout(remove)
+    }
   }, [])
 
   return (
@@ -34,7 +40,7 @@ export default function App() {
         >
           Skip to content
         </a>
-        {introWillRun && (
+        {introWillRun && !introGone && (
           <ErrorBoundary onError={() => setIntroStage('landed')}>
             <Suspense
               fallback={<div aria-hidden="true" className="fixed inset-0 z-[100] bg-[#050403]" />}

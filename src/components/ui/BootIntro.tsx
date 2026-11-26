@@ -53,8 +53,12 @@ export default function BootIntro() {
   const word = useRef<HTMLSpanElement>(null)
   const skipButton = useRef<HTMLButtonElement>(null)
 
-  // Start at the top with scrolling locked: the hero must sit where the word will fly to.
+  // Start at the top with scrolling locked: the hero must sit where the word will fly to. The lock
+  // is released as soon as the loader is finished (this component stays mounted, rendering nothing,
+  // so it must not wait for unmount), and on unmount.
+  const finished = phase === 'done'
   useEffect(() => {
+    if (finished) return
     window.scrollTo(0, 0)
     const root = document.documentElement
     const previous = root.style.overflow
@@ -63,7 +67,7 @@ export default function BootIntro() {
     return () => {
       root.style.overflow = previous
     }
-  }, [])
+  }, [finished])
 
   // Make sure every script's font is loaded before anything shows, so nothing flickers.
   useEffect(() => {

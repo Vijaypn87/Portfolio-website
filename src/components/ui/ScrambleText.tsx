@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'motion/react'
+import { useIntroDone } from '@/lib/intro'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 
 const GLYPHS = '01/\\<>[]{}-_=+*#%&'
@@ -24,10 +25,11 @@ export function ScrambleText({ text, className, active = true }: ScrambleTextPro
   const ref = useRef<HTMLSpanElement>(null)
   const inView = useInView(ref, { once: true, margin: '0px 0px -10% 0px' })
   const reduced = useReducedMotion()
+  const done = useIntroDone()
   const [shown, setShown] = useState(() => text.replace(/[^ ]/g, '·'))
 
   useEffect(() => {
-    if (!inView || !active || reduced) return
+    if (!inView || !active || !done || reduced) return
     const start = performance.now()
     let frame = 0
     const tick = (now: number) => {
@@ -37,7 +39,7 @@ export function ScrambleText({ text, className, active = true }: ScrambleTextPro
     }
     frame = requestAnimationFrame(tick)
     return () => cancelAnimationFrame(frame)
-  }, [inView, active, reduced, text])
+  }, [inView, active, done, reduced, text])
 
   return (
     <span ref={ref} className={className}>

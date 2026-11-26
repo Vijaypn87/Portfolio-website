@@ -56,6 +56,15 @@ export const useIntroStage = () =>
     () => 'landed' as IntroStage,
   )
 
+/**
+ * True once the intro loader has finished (immediately on visits without it). Entrance animations
+ * wait for this, so they play as the loader closes rather than unseen behind it.
+ */
+export const useIntroDone = () => useIntroStage() === 'landed'
+
+/** A short pause after the loader closes before the first entrance animations start, in seconds. */
+export const INTRO_STAGGER = introWillRun ? 0.12 : 0
+
 /** True when the loader's "Vijay" has flown into the hero, so that word needs no reveal of its own. */
 export const useIntroFlew = () =>
   useSyncExternalStore(

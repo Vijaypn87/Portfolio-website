@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { useInView } from 'motion/react'
+import { useIntroDone } from '@/lib/intro'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
 import { cn } from '@/lib/utils'
 
@@ -15,12 +16,13 @@ export function GridFrame({ className }: { className?: string }) {
   const ref = useRef<HTMLDivElement>(null)
   const inView = useInView(ref, { once: true, margin: '0px 0px -15% 0px' })
   const reduced = useReducedMotion()
+  const done = useIntroDone()
 
   return (
     <div
       ref={ref}
       aria-hidden="true"
-      data-in={String(inView || reduced)}
+      data-in={String((inView && done) || reduced)}
       className={cn(
         'grid-frame pointer-events-none absolute inset-x-0 bottom-0 top-[var(--frame-top,0px)] -z-10',
         className,

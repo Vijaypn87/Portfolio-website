@@ -5,6 +5,8 @@ import { profile } from '@/data/profile'
 import { Card } from '@/components/ui/Card'
 import { useClock } from '@/hooks/useClock'
 import { useReducedMotion } from '@/hooks/useReducedMotion'
+import { useReveal } from '@/hooks/useReveal'
+import { INTRO_STAGGER } from '@/lib/intro'
 
 const { x, y } = BENGALURU_POINT
 
@@ -20,11 +22,8 @@ export function LocationCard() {
   const gradients = useId()
   const indiaFill = `${gradients}-india`
   const karnatakaFill = `${gradients}-karnataka`
-  const reveal = {
-    initial: reduced ? false : { fillOpacity: 0 },
-    whileInView: { fillOpacity: 1 },
-    viewport: { once: true, margin: '-60px' },
-  } as const
+  // The outline draws itself (and the fills fade in) once the map is in view and the intro has closed.
+  const [mapRef, ready] = useReveal('-60px')
 
   return (
     <Card className="h-full">
@@ -34,6 +33,7 @@ export function LocationCard() {
             a fixed height. */}
         <div className="grid h-[19rem] flex-none place-items-center [container-type:size] sm:h-[22rem] lg:h-auto lg:min-h-0 lg:flex-1">
           <div
+            ref={mapRef}
             className="relative"
             style={{
               width: `min(100cqw, calc(100cqh * ${INDIA_VIEWBOX.width / INDIA_VIEWBOX.height}))`,
@@ -66,11 +66,10 @@ export function LocationCard() {
                 strokeWidth={2.2}
                 strokeLinejoin="round"
                 initial={reduced ? false : { pathLength: 0, fillOpacity: 0 }}
-                whileInView={{ pathLength: 1, fillOpacity: 1 }}
-                viewport={{ once: true, margin: '-60px' }}
+                animate={ready ? { pathLength: 1, fillOpacity: 1 } : undefined}
                 transition={{
-                  pathLength: { duration: 2, ease: 'easeInOut' },
-                  fillOpacity: { duration: 0.8, delay: 1.5 },
+                  pathLength: { duration: 2, ease: 'easeInOut', delay: INTRO_STAGGER },
+                  fillOpacity: { duration: 0.8, delay: 1.5 + INTRO_STAGGER },
                 }}
               />
               <m.path
@@ -79,8 +78,9 @@ export function LocationCard() {
                 style={{ stroke: 'var(--map-stroke-state)' }}
                 strokeWidth={1.4}
                 strokeLinejoin="round"
-                {...reveal}
-                transition={{ fillOpacity: { duration: 0.8, delay: 1.7 } }}
+                initial={reduced ? false : { fillOpacity: 0 }}
+                animate={ready ? { fillOpacity: 1 } : undefined}
+                transition={{ fillOpacity: { duration: 0.8, delay: 1.7 + INTRO_STAGGER } }}
               />
               <g transform={`translate(${x} ${y})`}>
                 <circle r="6" className="pin-ring" />
